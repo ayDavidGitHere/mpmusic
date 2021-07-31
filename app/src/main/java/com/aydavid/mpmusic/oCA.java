@@ -153,6 +153,15 @@ public class oCA extends ArrayAdapter<song> {
 			TextView xSongsFrom = view.findViewById(R.id.text_SongsFrom);
 			xSongsFrom.setText(dat.size()+"");
 			xSongsFrom.setTypeface(font_abelr);
+			xSongsFrom.setOnClickListener(new View.OnClickListener(){    @Override
+				public void  onClick(View v){
+					new Thread(new Runnable() {    @Override
+						public void run(){
+							BufferSongList bufSongList = new BufferSongList(context);
+							bufSongList.load();
+					}}).start();
+				}
+			});
 			TextView text_alltracks = view.findViewById(R.id.text_alltracks);
 			text_alltracks.setText("songs from"+" "+currentPlaylist);
 			text_alltracks.setTypeface(font_autumn);

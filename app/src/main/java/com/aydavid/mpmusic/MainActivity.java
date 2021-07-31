@@ -41,7 +41,24 @@ public class MainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+
+		//loaddatafromsplasher
+		Bundle bundleFromSplasher = getIntent().getExtras();
+		if (bundleFromSplasher != null) {
+		    declareRand = bundleFromSplasher.getInt("declareRand");
+		}
+		else{
+			toaster("could not load from splasher");
+			
+		}
+		if(bundleFromSplasher == null){  declareRand = new Random().nextInt(4); }
+		mainUi = new MainUi(this, this, getWindow());
+		mainUi.SetUiLayoutType(1);
+		mainUi.SetContentView();
+		mainUi.uiColorAndResChanger(declareRand);
+		
+		
+		
 		getActionBar().hide();
 		app_context = getApplicationContext();
 		
@@ -69,167 +86,14 @@ public class MainActivity extends Activity
 		lyricsView = (TextView) findViewById(R.id.lyricsView);
 		timer = (TextView) findViewById(R.id.timer);
 		
-		//loaddatafromsplasher
-		Bundle bundleFromSplasher = getIntent().getExtras();
-		if (bundleFromSplasher != null) {
-		    declareRand = bundleFromSplasher.getInt("declareRand");
-		}
-		else{
-			toaster("could not load from splasher");
-			songList();
-		}
 		
 		
 		
 		cA = new oCA(this, MainActivity.this, Playerprops.SONG_LIST_CURRENT);
 		tracksLv.setAdapter(cA);
-		tracksLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-					//this is the way to find selected object/item
-					pos = pos-1;
-							if(pos>= 0){
-					playIndex = pos;
-				    item = (song) adapterView.getItemAtPosition(pos);
-					pos = item.getSongInd();   
-					item =  Playerprops.SONG_LIST_ALL.get( pos );  //new type //get from first song list
-					//playSong(item);
-					PLAY_SONG(item);
-					       }//EO if
-				}
-			});
+		mainUi.SetListeners();
+        startRun(); 
 		
-		tracksLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id){
-				popItemPos = ( (song) adapterView.getItemAtPosition(pos-1) ).getSongInd();
-				PopupMenu popup = new PopupMenu(adapterView.getContext(),view);
-				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){ 
-					@Override
-				    public boolean onMenuItemClick(MenuItem item) {
-						
-						if(item.getItemId() == R.id.item){ if(popItemPos>=0) addToQueue(popItemPos); }
-						if(item.getItemId() == R.id.item2){   if(popItemPos>=0){ new playlistDialog().playlistDialog(MainActivity.this, popItemPos, Playerprops.SONG_LIST_CURRENT, Uiprops.primaryColor_Default ); }   }
-						return false;
-					}
-					});
-			    popup.inflate(R.menu.main_menu);
-				popup.setGravity(Gravity.CENTER);
-				popup.show();
-				return true;
-				}  });
-		
-		
-		tracks.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					tClicked = tClicked+1;
-					if(tClicked %2 == 0) {   dropList(); }
-					else {closeList(); }
-					}});
-			
-		relTracks.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-			   
-				}}); 
-					
-		songIm.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					songImClicked();
-				}}); 
-		songIm.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View view) {
-				try{
-				final CustomPopupMenu popup = new CustomPopupMenu(getApplicationContext(), relGen);
-			    popup.inflate(R.layout.imageview_popmenu);
-				for(View item : popup.items){
-					item.setOnClickListener( new View.OnClickListener(){
-						@Override
-						public void onClick(View v){
-						popup.dismiss();
-						if(v.getId() == R.id.but_takeShot){ 
-							ArrayList<View> viewsList = new ArrayList<View>();
-							viewsList.add(songIm);
-							viewsList.add(tracks);
-							viewsList.add(relGen);
-							int Colors[] = {Uiprops.secondaryColor, Uiprops.primaryColor};
-							new takeScreenshot().takeShot(MainActivity.this, viewsList, NOW_PLAYING.getSongTitle(), Colors );
-						}
-						if(v.getId() == R.id.but_showLyrics){   
-							lyricsViewContainer.setVisibility( lyricsViewContainer.getVisibility() == View.VISIBLE?View.GONE:View.VISIBLE);
-						}
-					}//EO onClick
-					});
-				}//EO for
-				popup.setGravity(Gravity.CENTER);
-				popup.show();
-				}catch(Exception e){toaster(e+"");}
-					
-				return true;
-				}}); 
-				
-		searchBut.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					cA.filtering(searchV_editT.getText().toString(), Playerprops.SONG_LIST_ALL);
-					sVClicked = sVClicked+1;
-					sVClicked();
-				}});
-
-				
-		shuffleBut.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					Intent eventIntent = new Intent("SHUFFLE_LIST");
-					MainActivity.this.sendBroadcast(eventIntent);
-				}});
-		
-		nextBut.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v){
-				    goToNext();
-				}});
-		
-		backBut.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v){
-		             goToBack();  
-				}});
-	
-	
-		longl.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v){
-   
-				}});
-	
-		topBar.setOnTouchListener(new View.OnTouchListener() {
-				@Override
-				public boolean onTouch(View v,MotionEvent e){
-					float eX = e.getX(); float eY = e.getY();
-					int position = (int)eX* (int) (mp.getDuration()/topBar.getWidth());
-					seekTo(position);
-					return false;
-				}});
-				
-				
-					
-	    //init_ui
-        startRun();   //changeUi();
-		//if not declared by intent bundle redeclarw
-		if(bundleFromSplasher == null){  declareRand = new Random().nextInt(4); }
-		mainUi = new MainUi(this, getWindow());
-		mainUi.uiColorAndResChanger(declareRand);
-		
-		
-		
-		 
-		 
-		
-		     
 		if(playservice.isRunning == true){
 		toaster("Service is running");
 		Bundle bundle = new Bundle();
@@ -241,44 +105,6 @@ public class MainActivity extends Activity
 		mp = new MediaPlayer();
 		mp = playservice.mpServe;
 
-		
-		searchV_editT.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(final CharSequence s, final int start, final int count, final
-											  int after) {
-			}
-			@Override
-			public void onTextChanged(final CharSequence s, final int start, final int before, final
-										  int count) {
-         		//imitating submit
-		 		if(s.toString().contains("[\\n||\\r]+")){   toaster("entered");
-         			cA.filtering(s.toString(), Playerprops.SONG_LIST_ALL);
-					sVClicked++; 
-					sVClicked();
-		 		}
-			}
-			@Override
-			public void afterTextChanged(final Editable s) {
-				
-			}
-
-		}); //EO addTextChangedListener
-		searchV_editT.setOnKeyListener(new OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent keyEvent){
-					if(keyEvent.getAction() == KeyEvent.ACTION_DOWN   || 
-						keyEvent.getAction() == KeyEvent.KEYCODE_ENTER ){   
-						//toaster("entered");
-						cA.filtering(searchV_editT.getText().toString(), Playerprops.SONG_LIST_CURRENT);
-						sVClicked++; 
-						sVClicked();
-						return true;
-					}
-					return false;
-				}
-		});
-		
-		
 		final Thread.UncaughtExceptionHandler defaultHandler =
 			Thread.getDefaultUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler( new Thread.UncaughtExceptionHandler() {
@@ -361,36 +187,6 @@ public class MainActivity extends Activity
 					});
 		}});
 	}
-
-
-	public void dropList(){
-    	DisplayMetrics metrics = new DisplayMetrics();
-		this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		//toaster(""+metrics.heightPixels+" "+" "+metrics.densityDpi);
-		             /*
-		android.view.ViewGroup.LayoutParams layoutParams= tracksLv.getLayoutParams();
-	    //layoutParams.height = (450*(int) tracksLv.getContext().getResources().getDisplayMetrics().density);
-		layoutParams.height = (int) (metrics.heightPixels/1.3);
-		tracksLv.setLayoutParams(layoutParams);           */
-	    
-		android.view.ViewGroup.LayoutParams layoutParamsLinear= listViewContain.getLayoutParams();
-	    //layoutParams.height = (450*(int) tracksLv.getContext().getResources().getDisplayMetrics().density);
-		layoutParamsLinear.height = (int) (metrics.heightPixels/1.3);
-		listViewContain.setLayoutParams(layoutParamsLinear);
-		
-	}
-	
-	public void closeList(){
-	            /*
-		android.view.ViewGroup.LayoutParams layoutParams= tracksLv.getLayoutParams();
-		layoutParams.height = 0;
-		tracksLv.setLayoutParams(layoutParams);       */
-		android.view.ViewGroup.LayoutParams layoutParamsLinear= listViewContain.getLayoutParams();
-	    //layoutParams.height = (450*(int) tracksLv.getContext().getResources().getDisplayMetrics().density);
-		layoutParamsLinear.height = 0;
-		listViewContain.setLayoutParams(layoutParamsLinear);
-	}
-	
 	
 	
 	
@@ -398,16 +194,16 @@ public class MainActivity extends Activity
 		Runnable runnable = new Runnable() {
 				@Override
 				public void run() {
-				  if(NOW_PLAYING != null){
+				  if(Playerprops.NOW_PLAYING != null){
 					moveTimerBar();
-					if(NOW_PLAYING != null && playPosition > playDuration/2){
-					  if(LAST_LOGGED == null || LAST_LOGGED.getSongData() != NOW_PLAYING.getSongData() ){
+					if(Playerprops.NOW_PLAYING != null && playPosition > playDuration/2){
+					  if(LAST_LOGGED == null || LAST_LOGGED.getSongData() != Playerprops.NOW_PLAYING.getSongData() ){
 					    try{	  
 							new Thread(new Runnable() { 
 							@Override
 								public void run(){
-									LAST_LOGGED = NOW_PLAYING;
-									new logMostPlayed().logMostPlayed(MainActivity.this, NOW_PLAYING.getSongData());
+									LAST_LOGGED = Playerprops.NOW_PLAYING;
+									new logMostPlayed().logMostPlayed(MainActivity.this, Playerprops.NOW_PLAYING.getSongData());
 						        }
 						    }).start();
 						}
@@ -557,35 +353,6 @@ public class MainActivity extends Activity
 	String songCol = "#FF5900";
 	
 	
-	//controls
-	public void sVClicked(){
-		if(sVClicked%2 ==0){ openSV(); }
-		else{ closeSV(); }
-	}
-	public void openSV(){
-	 	ViewGroup searchVParent = ( (ViewGroup) searchV_editT.getParent() );
-	 	for(int childIndex=0; searchVParent.getChildCount()>childIndex; childIndex++){
-	 		searchVParent.getChildAt(childIndex).setVisibility(View.GONE);
-	 	}
-	 	searchBut.setVisibility(View.VISIBLE);
-	 	searchV_editT.setVisibility(View.VISIBLE);
-	 	searchV_editT.setBackgroundColor(Uiprops.primaryColor);
-	 	searchV_editT.setTextColor(Uiprops.secondaryColor);
-	 	searchV_editT.requestFocus();
-	 	InputMethodManager iMM = ((InputMethodManager)this.getSystemService(this.INPUT_METHOD_SERVICE));
-	 	iMM.showSoftInput(searchV_editT, iMM.SHOW_FORCED);
-	 	dropList();	
-	}
-	public void closeSV(){
-		ViewGroup searchVParent = ( (ViewGroup) searchV_editT.getParent() );
-		for(int childIndex=0; searchVParent.getChildCount()>childIndex; childIndex++){
-	 		if( searchVParent.getChildAt(childIndex) != searchV )searchVParent.getChildAt(childIndex).setVisibility(View.VISIBLE);
-		}
-		searchV_editT.setVisibility(View.GONE);
-	    searchV_editT.setText("");
-		((InputMethodManager)this.getSystemService(this.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow((this.getWindow().getDecorView().getApplicationWindowToken()), 0);
-		searchV_editT.clearFocus();
-	}
 	
 	
 	
@@ -593,74 +360,6 @@ public class MainActivity extends Activity
 	
 	
 	
-	
-	
-	public void changeTypeFace(){
-	    Typeface font = Typeface.createFromAsset(getAssets(), "font/nb.ttf");
-		songTitle.setTypeface(font);
-		songArtist.setTypeface(font);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public void songList(){
-		
-		ArrayList<song> songList;
-		songList = new ArrayList<song>();
-    int songCount = 0;
-	try{
-	ContentResolver musicResolver = getContentResolver();
-	Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		String[] project = {android.provider.MediaStore.Audio.Media._ID+" "};
-		String order = android.provider.MediaStore.Audio.Media.TITLE;
-		String order2 = android.provider.MediaStore.Audio.Media.DATE_MODIFIED+" DESC";
-	Cursor musicCursor = musicResolver.query(musicUri, null, null, null, order2);
-     
-	
-	if(musicCursor!=null && musicCursor.moveToFirst()){
-//get columns
-		int titleColumn = musicCursor.getColumnIndex
-		(android.provider.MediaStore.Audio.Media.TITLE);
-		int idColumn = musicCursor.getColumnIndex
-		(android.provider.MediaStore.Audio.Media._ID);
-		int artistColumn = musicCursor.getColumnIndex
-		(android.provider.MediaStore.Audio.Media.ARTIST);
-		int albumColumn = musicCursor.getColumnIndex
-		(android.provider.MediaStore.Audio.Media.ALBUM);
-		int dataColumn = musicCursor.getColumnIndex
-		(android.provider.MediaStore.Audio.Media.DATA);
-//add songs to list
-		do {
-			int thisId = (int) musicCursor.getLong(idColumn);
-			String thisTitle = musicCursor.getString(titleColumn);
-			String thisArtist = musicCursor.getString(artistColumn);
-			String thisAlbum = musicCursor.getString(albumColumn);
-			String thisData = musicCursor.getString(dataColumn);
-			songList.add(new song(thisData, thisTitle, thisArtist, thisAlbum, songCount));
-			
-		    songCount = songCount+1;
-		}
-		while (musicCursor.moveToNext());
-
-		}
-		
-		
-		Playerprops.SONG_LIST_ALL = songList;
-		Playerprops.SONG_LIST_CURRENT.addAll(songList);
-	}
-	catch(Exception e){  Toast.makeText(this, " "+e+" ",200000000).show();
-	}
-	
-	}//EO songList()
 	
 	
 	
@@ -927,7 +626,7 @@ public void onDestroy() {
 	/* Defined by ServiceCallbacks interface */
 	@Override
 	public void PLAY_UI(song song_item) {
-			NOW_PLAYING = song_item;
+			Playerprops.NOW_PLAYING = song_item;
 			new MyCustomAsyncTask().execute(song_item);
 			//toaster(song_item.getSongData());
 	}

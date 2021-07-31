@@ -6,14 +6,36 @@ import android.graphics.*;
 import android.widget.*;
 import android.os.*;
 import android.content.*;
+import android.util.*;
+import android.view.inputmethod.*;
+import android.text.*;
+import android.view.View.*;
 
 public class MainUi
 {
 	Context _context;
 	Window _window;
-	public MainUi(Context context, Window window){
+	private int UI_LAYOUT_TYPE_INDEX = 1;
+	ListView tracksLv;
+	LinearLayout tracks, listViewContain, relTracks, topBar, timerBar, lyricsViewContainer;
+	TextView songTitle, songArtist, timer, lyricsView;
+	ImageView divide, longl, songIm, backBut, nextBut, searchBut, shuffleBut;
+	RelativeLayout relGen; 
+	SearchView searchV;
+	EditText searchV_editT;
+	MainActivity AppInstance;
+	
+	boolean IsListOpened = false;
+	boolean IsSearchViewOpened = false;
+	
+	
+	
+	
+	public MainUi(Context context, MainActivity Instance, Window window){
+		AppInstance = Instance;
 		_context = context;
 		_window = window;
+		SetUiLayoutType(1);
 	}
 	public int[] getBgColor(Bitmap bmp){
 		int r, g, b;
@@ -129,7 +151,6 @@ public class MainUi
 		//Toast.makeText(MainActivity,  MainActivity.relTracks.getLayoutParams()+ " ", 2000).show();
 	}
 
-
 	public void uIChangeOnPlay(song item){
 		tintAll();
 		MainActivity.songTitle.setText(item.getSongTitle());
@@ -147,6 +168,268 @@ public class MainUi
 		MainActivity.songTitle.setTypeface(font);
 		MainActivity.songArtist.setTypeface(font);
 	}
+	
+	
+	public void dropList(){ 
+    	DisplayMetrics metrics = new DisplayMetrics();
+		_window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		//toaster(""+metrics.heightPixels+" "+" "+metrics.densityDpi);
+		/*
+		 android.view.ViewGroup.LayoutParams layoutParams= tracksLv.getLayoutParams();
+		 //layoutParams.height = (450*(int) tracksLv.getContext().getResources().getDisplayMetrics().density);
+		 layoutParams.height = (int) (metrics.heightPixels/1.3);
+		 tracksLv.setLayoutParams(layoutParams);           */
+
+		android.view.ViewGroup.LayoutParams layoutParamsLinear= listViewContain.getLayoutParams();
+	    //layoutParams.height = (450*(int) tracksLv.getContext().getResources().getDisplayMetrics().density);
+		layoutParamsLinear.height = (int) (metrics.heightPixels/1.3);
+		listViewContain.setLayoutParams(layoutParamsLinear);
+	}
+	public void closeList(){
+		/*
+		 android.view.ViewGroup.LayoutParams layoutParams= tracksLv.getLayoutParams();
+		 layoutParams.height = 0;
+		 tracksLv.setLayoutParams(layoutParams);       */
+		android.view.ViewGroup.LayoutParams layoutParamsLinear= listViewContain.getLayoutParams();
+	    //layoutParams.height = (450*(int) tracksLv.getContext().getResources().getDisplayMetrics().density);
+		layoutParamsLinear.height = 0;
+		listViewContain.setLayoutParams(layoutParamsLinear);
+	}
+
+
+	//controls
+	public void SearchButtonClicked(){
+		if(IsSearchViewOpened){ closeSV(); IsSearchViewOpened = false;}
+		else{ openSV(); IsSearchViewOpened = true;}
+	}
+	public void openSV(){
+	 	ViewGroup searchVParent = ( (ViewGroup) searchV_editT.getParent() );
+	 	for(int childIndex=0; searchVParent.getChildCount()>childIndex; childIndex++){
+	 		searchVParent.getChildAt(childIndex).setVisibility(View.GONE);
+	 	}
+	 	searchBut.setVisibility(View.VISIBLE);
+	 	searchV_editT.setVisibility(View.VISIBLE);
+	 	searchV_editT.setBackgroundColor(Uiprops.primaryColor);
+	 	searchV_editT.setTextColor(Uiprops.secondaryColor);
+	 	searchV_editT.requestFocus(); 
+	 	InputMethodManager iMM = ((InputMethodManager)AppInstance.getSystemService(AppInstance.INPUT_METHOD_SERVICE));
+	 	iMM.showSoftInput(searchV_editT, iMM.SHOW_FORCED);
+	 	dropList();	
+	}
+	public void closeSV(){
+		ViewGroup searchVParent = ( (ViewGroup) searchV_editT.getParent() );
+		for(int childIndex=0; searchVParent.getChildCount()>childIndex; childIndex++){
+	 		if( searchVParent.getChildAt(childIndex) != searchV )searchVParent.getChildAt(childIndex).setVisibility(View.VISIBLE);
+		}
+		searchV_editT.setVisibility(View.GONE);
+	    searchV_editT.setText("");
+		((InputMethodManager)AppInstance.getSystemService(AppInstance.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow((AppInstance.getWindow().getDecorView().getApplicationWindowToken()), 0);
+		searchV_editT.clearFocus();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void SetUiLayoutType(int TypeIndex){
+		UI_LAYOUT_TYPE_INDEX = TypeIndex;
+	}
+	public void SetContentView(){
+		switch (UI_LAYOUT_TYPE_INDEX){
+			case 1:
+				_window.setContentView(R.layout.main);
+			break;
+			default:
+				_window.setContentView(R.layout.main);
+		}
+	}//EO setcontentview.
+	public void SetListeners(){
+		tracksLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+					//this is the way to find selected object/item
+					pos = pos-1;
+					if(pos>= 0){
+						MainActivity.playIndex = pos;
+						song item = (song) adapterView.getItemAtPosition(pos);
+						pos = item.getSongInd();   
+						item =  Playerprops.SONG_LIST_ALL.get( pos );  //new type //get from first song list
+						//playSong(item);
+						AppInstance.PLAY_SONG(item);
+					}//EO if
+				}
+			});
+
+		tracksLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+				@Override
+				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id){
+					final int popItemPos = ( (song) adapterView.getItemAtPosition(pos-1) ).getSongInd();
+					PopupMenu popup = new PopupMenu(adapterView.getContext(),view);
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){ 
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+
+								if(item.getItemId() == R.id.item){ if(popItemPos>=0) AppInstance.addToQueue(popItemPos); }
+								if(item.getItemId() == R.id.item2){   if(popItemPos>=0){ new playlistDialog().playlistDialog(AppInstance, popItemPos, Playerprops.SONG_LIST_CURRENT, Uiprops.primaryColor_Default ); }   }
+								return false;
+							}
+						});
+					popup.inflate(R.menu.main_menu);
+					popup.setGravity(Gravity.CENTER);
+					popup.show();
+					return true;
+				}  });
+
+
+		tracks.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					if(IsListOpened){closeList(); IsListOpened = false;}else{dropList(); IsListOpened=true;}
+				}});
+
+		relTracks.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+
+				}}); 
+
+		songIm.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					AppInstance.songImClicked();
+				}}); 
+		songIm.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View view) {
+					try{
+						final CustomPopupMenu popup = new CustomPopupMenu(_context.getApplicationContext(), relGen);
+						popup.inflate(R.layout.imageview_popmenu);
+						for(View item : popup.items){
+							item.setOnClickListener( new View.OnClickListener(){
+									@Override
+									public void onClick(View v){
+										popup.dismiss();
+										if(v.getId() == R.id.but_takeShot){ 
+											ArrayList<View> viewsList = new ArrayList<View>();
+											viewsList.add(songIm);
+											viewsList.add(tracks);
+											viewsList.add(relGen);
+											int Colors[] = {Uiprops.secondaryColor, Uiprops.primaryColor};
+											new takeScreenshot().takeShot(AppInstance, viewsList, Playerprops.NOW_PLAYING.getSongTitle(), Colors );
+										}
+										if(v.getId() == R.id.but_showLyrics){   
+											lyricsViewContainer.setVisibility( lyricsViewContainer.getVisibility() == View.VISIBLE?View.GONE:View.VISIBLE);
+										}
+									}//EO onClick
+								});
+						}//EO for
+						popup.setGravity(Gravity.CENTER);
+						popup.show();
+					}catch(Exception e){AppInstance.toaster(e+"");}
+
+					return true;
+				}}); 
+
+		searchBut.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					AppInstance.cA.filtering(searchV_editT.getText().toString(), Playerprops.SONG_LIST_ALL);
+					SearchButtonClicked();
+				}});
+
+
+		shuffleBut.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Intent eventIntent = new Intent("SHUFFLE_LIST");
+					AppInstance.sendBroadcast(eventIntent);
+				}});
+
+		nextBut.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v){
+				    AppInstance.goToNext();
+				}});
+
+		backBut.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v){
+					AppInstance.goToBack();  
+				}});
+
+
+		longl.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v){
+
+				}});
+
+		topBar.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v,MotionEvent e){
+					float eX = e.getX(); float eY = e.getY();
+					int position = (int)eX* (int) (AppInstance.mp.getDuration()/topBar.getWidth());
+					AppInstance.seekTo(position);
+					return false;
+				}});
+
+		searchV_editT.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void beforeTextChanged(final CharSequence s, final int start, final int count, final
+											  int after) {
+				}
+				@Override
+				public void onTextChanged(final CharSequence s, final int start, final int before, final
+										  int count) {
+					//imitating submit
+					if(s.toString().contains("[\\n||\\r]+")){   AppInstance.toaster("entered");
+						AppInstance.cA.filtering(s.toString(), Playerprops.SONG_LIST_ALL);
+						SearchButtonClicked();
+					}
+				}
+				@Override
+				public void afterTextChanged(final Editable s) {
+
+				}
+
+			}); //EO addTextChangedListener
+		searchV_editT.setOnKeyListener(new OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent keyEvent){
+					if(keyEvent.getAction() == KeyEvent.ACTION_DOWN   || 
+					   keyEvent.getAction() == KeyEvent.KEYCODE_ENTER ){   
+						//toaster("entered");
+						AppInstance.cA.filtering(searchV_editT.getText().toString(), Playerprops.SONG_LIST_CURRENT);
+						SearchButtonClicked();
+						return true;
+					}
+					return false;
+				}
+		});
+		
+		
+		
+			
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -13,10 +13,12 @@ import android.graphics.drawable.*;
 public class ImageLoader{
 		MemoryCache memoryCache = new MemoryCache();
 		FileCache fileCache;
-		private Map<ImageView, String> imageViews = Collections.synchronizedMap(
+		private Map<ImageView, String> imageViews =
+		 Collections.synchronizedMap(
 			new WeakHashMap<ImageView, String>());
 		ExecutorService executorService; 
-		Handler handler = new Handler(); //handler to display images in UI thread
+		Handler handler = new Handler(); 
+		//handler to display images in UI thread
 		public Boolean BitmapIsFound = false;
 		public Bitmap LoadedBitmap = null;
 		public ImageLoader(Context context) {
