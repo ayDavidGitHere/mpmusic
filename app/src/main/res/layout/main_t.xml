@@ -1,0 +1,241 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:gravity="center"
+	android:id="@+id/relG"
+>
+
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		android:id="@+id/mainLinearLayout"
+		android:orientation="vertical"
+		android:layout_alignParentBottom="true"
+		android:background="#f10443"
+	>
+
+        <LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="350dp"
+			android:id="@+id/imageViewLinearLayout"
+			>
+		<ImageView
+			android:src="@drawable/m_lawn"
+			android:layout_width="fill_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/songIm"
+			android:scaleType="fitXY"
+		/>
+	    </LinearLayout>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_alignParentBottom="true"
+			android:layout_gravity="bottom"
+			android:padding="7dp"
+			android:id="@+id/relTracks"
+			android:elevation="10dp"
+			android:weightSum="9"
+			android:background="@drawable/back_list"
+		>
+			<LinearLayout
+				android:layout_weight="6"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:id="@+id/tracks" >
+				<TextView 
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Tap to show "
+					android:textColor="#ffffff"
+					android:textSize="10dp"
+					android:gravity="left"
+					android:id="@+id/songTitle"
+					android:maxEms="26"
+					android:maxLines="1"
+					android:ellipsize="end"
+				></TextView>
+				<TextView 
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Track list"
+					android:textColor="#ffffff"
+					android:textSize="15dp"
+					android:gravity="left"
+					android:id="@+id/songArtist"
+					android:maxLines="1"
+					android:ellipsize="end"
+				/>
+			</LinearLayout>
+
+
+			<ImageView
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="30dp"
+				android:src="@drawable/shuffle" 
+				android:layout_toRightOf="@+id/tracks"
+				android:id="@+id/shuffleBut"
+				android:layout_marginLeft="10dp"
+				android:layout_marginTop="10dp"
+
+			/>
+
+			<ImageView
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="30dp"
+				android:src="@drawable/back"
+				android:id="@+id/backBut"
+				android:layout_toRightOf="@+id/shuffleBut"
+				android:layout_marginLeft="10dp"
+				android:layout_marginTop="10dp"
+			/>
+
+			<ImageView
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="30dp"
+				android:src="@drawable/next"
+				android:layout_marginLeft="10dp"
+				android:layout_toRightOf="@+id/backBut"
+				android:id="@+id/nextBut"
+				android:layout_marginTop="10dp"
+			/>
+
+
+		</LinearLayout>
+
+
+		
+	</LinearLayout>
+
+	
+
+
+
+
+   
+
+
+
+
+        <!-- change 480px to 530px and ellipse 12 to 25 and set visibility gone for (shuffleBut & searchBut)  to accomodate long Title   -->
+
+
+
+
+
+
+
+
+
+
+	<LinearLayout
+		android:layout_width="670px"
+		android:layout_height="0px"
+		android:layout_marginTop="0dp"
+		android:background="@drawable/back_list"
+		android:id="@+id/listViewContain"
+		android:layout_gravity="center_horizontal"
+		android:layout_centerInParent="true"
+		android:elevation="30dp"
+	>
+		<ListView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/tracksLv"
+			android:layout_gravity="center_horizontal"
+			android:layout_centerInParent="true"
+			android:divider="@null"
+		/>
+	</LinearLayout>
+
+
+
+
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/rellay_timer">
+
+		<ImageView
+			android:layout_width="match_parent"
+			android:layout_height="20dp"
+			android:src="@drawable/longl"
+			android:id="@+id/longl"  
+			android:elevation="0dp"
+		/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="00: 00"
+			android:id="@+id/timer"
+			android:textColor="#ffffff"
+			android:textSize="10dp"
+			android:layout_marginTop="2dp"
+		/>
+
+		<ImageView
+			android:layout_width="10dp"
+			android:layout_height="10dp"
+			android:src="@drawable/mpm"
+			android:id="@+id/divide"
+			android:layout_toRightOf="@+id/timer"
+			android:layout_marginTop="2dp"
+		/>
+	</RelativeLayout>
+
+
+
+
+
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentTop="true"
+		android:weightSum="10"
+  		android:elevation="50dp"
+		android:paddingHorizontal="8dp">
+		<SearchView
+			android:layout_width="0dp"
+			android:layout_height="40dp"
+			android:layout_below="@+id/divide"
+			android:textColor="#000855"
+			android:background="#000855"
+			android:textColorPrimary="#ffffff"
+			android:id="@+id/searchV"
+			android:visibility="gone"
+		>
+		</SearchView>
+		<EditText
+			android:layout_weight="9"
+			android:layout_width="0dp"
+			android:layout_height="40dp"
+			android:layout_below="@+id/divide"
+			android:textColor="#000855"
+			android:background="#000855"
+			android:textColorPrimary="#ffffff"
+			android:id="@+id/searchV_editT"
+			android:visibility="gone"
+		>
+		</EditText>
+		<ImageView
+			android:layout_weight="1"
+			android:layout_width="0dp"
+			android:layout_height="25dp"
+			android:src="@drawable/search" 
+			android:id="@+id/searchBut"
+			android:layout_marginTop="10dp"
+		/>
+	</LinearLayout>
+
+
+</RelativeLayout>

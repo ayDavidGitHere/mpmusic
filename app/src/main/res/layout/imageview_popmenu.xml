@@ -1,0 +1,36 @@
+
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:layout_marginTop="0dp"
+    android:orientation="horizontal"
+    android:background="#000000"
+	android:layout_gravity="center_horizontal"
+	android:gravity="center"
+	android:layout_centerInParent="true"
+	android:elevation="20dp"
+	android:id="@+id/Lay_popmenu">
+	<ImageView
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:src="@drawable/back"
+		android:id="@+id/but_showLyrics"
+	/>
+	<ImageView
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:src="@drawable/back"
+		android:id="@+id/but_takeShot"
+	/>
+
+	<ImageView
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:src="@drawable/back"
+		android:id="@+id/backBut3"
+	/>
+	
+	
+</LinearLayout>
