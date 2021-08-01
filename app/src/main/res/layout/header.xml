@@ -1,0 +1,228 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/header"
+    android:layout_marginBottom="2dp"
+	android:gravity="center_horizontal"
+	android:background="#264468">
+	
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="5"
+		android:id="@+id/tabs"
+		android:layout_gravity="center_horizontal"
+	    android:gravity="center_horizontal"
+		>
+		
+		
+<TextView
+		android:layout_weight="1"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:text="All Tracks"
+		android:id="@+id/tab_alltracks"
+		android:textColor="#dc1436"
+		android:textSize="10dp"
+		android:gravity="center_horizontal"
+		android:textAlignment="center"
+		android:paddingBottom="6dp"
+		/>
+<TextView
+	   android:layout_weight="1"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:text="Playlists"
+		android:id="@+id/tab_playlists"
+		android:textColor="#dc1436"
+		android:textSize="10dp"
+		android:gravity="center_horizontal"
+		android:textAlignment="center"
+	android:paddingBottom="6dp"
+/>
+<TextView
+	android:layout_weight="1"
+	android:layout_width="0dp"
+	android:layout_height="wrap_content"
+	android:text="Most Played"
+	android:id="@+id/tab_mostplayed"
+	android:textColor="#dc1436"
+	android:textSize="10dp"
+	android:gravity="center_horizontal"
+	android:textAlignment="center"
+	android:paddingBottom="6dp"
+/>
+		<TextView
+			android:layout_weight="1"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:text="Albums"
+			android:id="@+id/tab_albums"
+			android:textColor="#dc1436"
+			android:textSize="10dp"
+			android:gravity="center_horizontal"
+			android:textAlignment="center"
+			android:paddingBottom="6dp"
+		/>
+
+		<TextView
+			android:layout_weight="1"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:text="Artists"
+			android:id="@+id/tab_artists"
+			android:textColor="#dc1436"
+			android:textSize="10dp"
+			android:gravity="center_horizontal"
+			android:textAlignment="center"
+			android:paddingBottom="6dp"
+		/>
+	</LinearLayout>
+
+
+
+
+
+    <LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:layout_gravity="center_horizontal"
+	    android:gravity="center_horizontal"
+		android:layout_marginTop="30dp"
+		android:layout_marginBottom="30dp"
+		android:id="@+id/linear"
+	>
+
+
+
+		<ImageView
+			android:layout_width="150px"
+			android:layout_height="150px"
+			android:src="@drawable/m_lawn"
+			android:id="@+id/headerArt"
+			android:layout_gravity="center_horizontal"
+			android:layout_centerInParent="true"
+		    android:visibility="gone"
+		/>
+       
+	
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="0"
+				android:id="@+id/text_SongsFrom"
+				android:textColor="#dc1436"
+			 	android:gravity="center_horizontal"
+				android:layout_centerInParent="true"
+				android:textSize="50dp"
+			    android:textStyle="bold"
+			/>
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="songs from ALL TRACKS"
+				android:id="@+id/text_alltracks"
+				android:textColor="#dc1436"
+				android:gravity="center_horizontal"
+				android:layout_centerInParent="true"
+			    android:textSize="17dp"
+				android:textStyle="bold"
+			/>
+	
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_horizontal"
+			android:layout_centerInParent="true"
+			android:weightSum="10"
+		    android:layout_marginHorizontal="20dp"
+			android:id="@+id/linLay_sV_sB"
+		>
+			<SearchView
+				android:layout_weight="9"
+				android:layout_width="0dp"
+				android:layout_height="25dp"
+				android:textColor="#000855"
+				android:background="#000855"
+				android:textColorPrimary="#ffffff"
+				android:id="@+id/searchV"
+				android:visibility="gone"
+			>
+			</SearchView>
+			<ImageView
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="25dp"
+				android:src="@drawable/search" 
+				android:id="@+id/searchBut"
+				android:layout_marginTop="10dp"
+				android:visibility="gone"
+			/>
+		</LinearLayout>
+		
+
+
+
+	</LinearLayout>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:layout_gravity="center_horizontal"
+	    android:gravity="center_horizontal"
+		android:layout_marginTop="30dp"
+		android:layout_marginBottom="30dp"
+		android:visibility="gone"
+		android:id="@+id/linear2"
+	>
+
+
+
+	
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="P1"
+			android:id="@+id/playlist1"
+			android:textColor="#dc1436"
+			android:textSize="12dp"
+			android:textStyle="italic"
+			android:layout_marginLeft="12dp"
+		/>
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/allplaylists"
+		android:orientation="vertical"
+		android:layout_gravity="center_horizontal"
+	    android:gravity="center_horizontal"
+		android:layout_marginTop="0dp"
+		android:layout_marginBottom="0dp"
+		>
+    </LinearLayout>
+
+
+
+
+	</LinearLayout>
+	
+	
+</RelativeLayout>

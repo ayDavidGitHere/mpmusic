@@ -1,0 +1,25 @@
+<LinearLayout   xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:orientation="vertical"
+ android:id="@+id/containAll">
+<TextView
+ android:id="@+id/textView1"
+android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Create New Playlist"
+ android:color="#dc1436"
+ android:textSize="25px"
+ android:paddingBottom="20px"
+ android:paddingLeft="20px"
+ />
+<EditText
+ android:id="@+id/etUserInput"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content" 
+ android:layout_marginBottom="20px"
+ android:background="#dc1436"
+ android:layout_marginHorizontal="30px"
+ />
+
+</LinearLayout>
