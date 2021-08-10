@@ -1,0 +1,17 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:id="@+id/relG"
+		android:background="#000837"
+    >
+
+		<ImageView
+			android:src="@drawable/cover_image"
+			android:layout_width="match_parent"
+			android:layout_height="500dp"
+			android:id="@+id/songIm"
+			android:layout_centerInParent="true"
+		/>
+	</RelativeLayout>
+    

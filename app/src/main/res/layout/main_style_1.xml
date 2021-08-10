@@ -1,0 +1,309 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:gravity="center"
+	android:id="@+id/relG">
+    
+    
+    
+    
+    
+    <ImageView
+        android:src="@drawable/m_lawn"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+		android:id="@+id/songIm"
+		android:layout_centerInParent="true"
+	/>
+	<!--$$$$$-->
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		android:padding="7dp"
+		android:id="@+id/relTracks"
+		android:elevation="0dp"
+		android:weightSum="9"
+		android:background="@drawable/back_list">
+		<LinearLayout
+		   android:layout_weight="6"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:id="@+id/tracks">
+		    <TextView 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="Tap to show "
+			    android:textColor="#ffffff"
+			    android:textSize="10dp"
+	            android:gravity="left"
+		        android:id="@+id/songTitle"
+		        android:maxEms="26"
+		        android:maxLines="1"
+		        android:ellipsize="end">
+		    </TextView>
+		    <TextView 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="Track list"
+			    android:textColor="#ffffff"
+			    android:textSize="15dp"
+			    android:gravity="left"
+			    android:id="@+id/songArtist"
+			    android:maxLines="1"
+			    android:ellipsize="end"/>
+		</LinearLayout>
+        <!-- change 480px to 530px and ellipse 12 to 25 and set visibility gone for (shuffleBut & searchBut)  to accomodate long Title   -->
+		<LinearLayout
+		    android:layout_weight="3"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:id="@+id/controls_container">
+		    <ImageView
+	    		android:layout_weight="1"
+	    		android:layout_width="0dp"
+		    	android:layout_height="30dp"
+		    	android:src="@drawable/shuffle" 
+		    	android:layout_toRightOf="@+id/tracks"
+		    	android:id="@+id/shuffleBut"
+		    	android:layout_marginLeft="10dp"
+		    	android:layout_marginTop="10dp"
+		    />
+		    <ImageView
+			    android:layout_weight="1"
+			    android:layout_width="0dp"
+			    android:layout_height="30dp"
+			    android:src="@drawable/back"
+		        android:id="@+id/backBut"
+		    	android:layout_toRightOf="@+id/shuffleBut"
+			    android:layout_marginLeft="10dp"
+			    android:layout_marginTop="10dp"
+		    />
+		    <ImageView
+			    android:layout_weight="1"
+			    android:layout_width="0dp"
+			    android:layout_height="30dp"
+			    android:src="@drawable/next"
+                android:layout_marginLeft="10dp"
+	            android:layout_toRightOf="@+id/backBut"
+		        android:id="@+id/nextBut"
+			    android:layout_marginTop="10dp"
+	        />
+	    </LinearLayout>
+	</LinearLayout>
+	<!--$$$$$-->
+	<LinearLayout
+		android:layout_width="670px"
+		android:layout_height="0px"
+		android:layout_marginTop="0dp"
+		android:background="@drawable/back_list"
+	    android:id="@+id/listViewContain"
+	    android:layout_gravity="center_horizontal"
+		android:layout_centerInParent="true"
+		android:elevation="25dp">
+		    <ListView
+			    android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/tracksLv"
+	  			android:layout_gravity="center_horizontal"
+			    android:layout_centerInParent="true"
+				android:divider="@null"/>
+	</LinearLayout>
+	<!--$$$$$-->
+	<LinearLayout
+		android:layout_width="670px"
+		android:layout_height="850px"
+		android:layout_marginTop="0dp"
+		android:background="#111111"
+		android:id="@+id/lyricsViewContainer"
+		android:layout_gravity="center_horizontal"
+		android:layout_centerInParent="true"
+		android:elevation="10dp"
+		android:alpha="0.5"
+		android:visibility="gone">
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/lyricsView"
+			android:text="God, I know I'm nothin' like them \n \n
+		I'm just different, I'm built different \n \n
+		I feel as if we all got a purpose and we all special in some way\n \n
+		But me, my potential is unmatched\n \n
+		I'm the chosen one\n \n
+		But only time'll tell, long live the guys\n \n
+		Uh"
+			android:textSize="45px"
+			android:textStyle="bold"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:layout_centerInParent="true"
+		></TextView>
+	</LinearLayout>
+	<!--$$-->
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="0dp"
+		android:orientation="horizontal"
+		android:background="#000000"
+		android:layout_gravity="center_horizontal"
+		android:gravity="center"
+		android:layout_centerInParent="true"
+		android:elevation="20dp"
+		android:id="@+id/Lay_popmenu"
+		android:visibility="gone"
+		android:padding="5dp">
+		<ImageView
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:src="@drawable/icon_showlyrics"
+			android:id="@+id/but_showLyrics"
+		/>
+		<ImageView
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:src="@drawable/icon_takeshot"
+			android:id="@+id/but_takeShot"
+		/>
+	</LinearLayout>
+	<!--$$$$$-->
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/rellay_timer">
+		<ImageView
+		    android:layout_width="match_parent"
+		    android:layout_height="20dp"
+		    android:src="@drawable/longl"
+		    android:id="@+id/longl"  
+	        android:elevation="0dp"
+		    />
+	    <ImageView
+	        android:layout_width="10dp"
+	        android:layout_height="10dp"
+	        android:src="@drawable/mpm"
+	        android:id="@+id/divide"
+	        android:layout_toRightOf="@+id/timer"
+	        android:layout_marginTop="2dp"
+	        />
+	</RelativeLayout>
+	<!--$$$$$-->
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="25dp"
+		android:orientation="vertical"
+		android:layout_alignParentTop="true"
+		android:padding="0dp"
+		android:id="@+id/topBar"
+		android:elevation="32dp"
+		android:background="@drawable/back_list"
+		android:weightSum="4">
+		
+		
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="3"
+			android:orientation="horizontal"
+			android:layout_alignParentTop="true"
+			android:padding="0dp"
+			android:layout_marginBottom="0dp"
+			android:layout_marginTop="0dp"
+			android:id="@+id/iconsBar"
+			android:weightSum="12">
+			<SearchView
+				android:layout_width="match_parent"
+				android:layout_height="40dp"
+				android:layout_below="@+id/divide"
+				android:textColor="#000855"
+				android:background="#000855"
+				android:textColorPrimary="#ffffff"
+				android:id="@+id/searchV"
+				android:visibility="gone"
+			>
+			</SearchView>
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="11"
+				android:id="@+id/timer_container"
+				>
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:text="00: 00"
+					android:id="@+id/timer"
+					android:textColor="#ffffff"
+					android:layout_marginTop="0dp"
+					android:layout_centerInParent="true"
+					android:layout_gravity="center"
+					android:gravity="center"
+					android:background="@drawable/bg_rad_grey"
+			/>
+			</LinearLayout>
+			<EditText
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="11"
+				android:textColor="#000855"
+				android:background="#000855"
+				android:textColorPrimary="#ffffff"
+				android:maxLines="1"
+				android:id="@+id/searchV_editT"
+				android:visibility="gone"
+			>
+			</EditText>
+			<ImageView
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:src="@drawable/search" 
+				android:id="@+id/searchBut"
+			/>
+		</LinearLayout>
+		
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:orientation="horizontal"
+			android:id="@+id/timerBarContainer"
+			android:padding="0dp">
+
+			<LinearLayout
+				android:layout_width="1dp"
+				android:layout_height="match_parent"
+				android:orientation="horizontal"
+				android:layout_alignParentTop="true"
+				android:layout_margin="0dp"
+				android:id="@+id/timerBar"
+				android:background="#cccccc">
+		    	
+			</LinearLayout>
+		</LinearLayout>
+
+		
+	</LinearLayout>
+	
+	
+	
+	
+	
+	
+	
+ 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</RelativeLayout>
