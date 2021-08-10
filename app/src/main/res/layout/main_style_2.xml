@@ -7,26 +7,41 @@
     
     
     
-    
-    
-	
+    <ImageView
+		android:src="@drawable/m_lawn"
+		android:layout_width="match_parent"
+		android:layout_height="500dp"
+		android:id="@+id/songIm"
+		android:layout_gravity="center_horizontal"
+	/>
+	<!--$$$-->
+	<LinearLayout
+		android:layout_width="670px"
+		android:layout_height="0px"
+		android:layout_marginTop="0dp"
+		android:background="@drawable/back_list"
+	    android:id="@+id/listViewContain"
+	    android:layout_gravity="center_horizontal"
+		android:layout_centerInParent="true"
+		android:elevation="20dp">
+		<ListView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/tracksLv"
+			android:layout_gravity="center_horizontal"
+			android:layout_centerInParent="true"
+			android:divider="@null"/>
+	</LinearLayout>
+	<!--$$$$$-->
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:layout_alignParentBottom="true"
 		android:gravity="bottom"
-		android:id="@+id/relTracks">
-		
-		<ImageView
-				android:src="@drawable/m_lawn"
-				android:layout_width="match_parent"
-				android:layout_height="300dp"
-				android:id="@+id/songIm"
-				android:layout_centerInParent="true"
-				android:layout_gravity="center_horizontal"
-		/>
-		<!--$$$$$-->
+		android:id="@+id/relTracks"
+		android:elevation="25dp"
+		>
 		<LinearLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -37,7 +52,7 @@
 			android:background="@drawable/playbackcontrols_background"
 			android:elevation="25dp"
 			android:padding="15dp"
-			android:layout_marginVertical="10dp"
+			android:layout_marginTop="10dp"
 			>
 		    <ImageView
 			    android:layout_width="30dp"
@@ -99,24 +114,6 @@
 			    android:maxLines="1"
 			    android:ellipsize="end"/>
 		</LinearLayout>
-	</LinearLayout>
-	<!--$$$$$-->
-	<LinearLayout
-		android:layout_width="670px"
-		android:layout_height="0px"
-		android:layout_marginTop="0dp"
-		android:background="@drawable/back_list"
-	    android:id="@+id/listViewContain"
-	    android:layout_gravity="center_horizontal"
-		android:layout_centerInParent="true"
-		android:elevation="20dp">
-		    <ListView
-			    android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:id="@+id/tracksLv"
-	  			android:layout_gravity="center_horizontal"
-			    android:layout_centerInParent="true"
-				android:divider="@null"/>
 	</LinearLayout>
 	<!--$$$$$-->
 	<LinearLayout
