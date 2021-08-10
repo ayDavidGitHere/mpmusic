@@ -387,7 +387,7 @@ public class MainActivity extends Activity
 			// This function receives result(String s) returned from the doInBackground() method.
 			// Update UI with the found string.
 			
-			ImageLoader imageLoader = new ImageLoader(MainActivity.this);
+			ImageLoader imageLoader = cA.imageLoader;//new ImageLoader(MainActivity.this);
 			imageLoader.DisplayImage(_songItem.getSongData(), mainUi.songIm, R.drawable.cover_image);
 			final Bitmap bitmap = imageLoader.LoadedBitmap;
 			if(imageLoader.BitmapIsFound){	NOW_PLAYING_HAS_NO_BITMAP= false;   }

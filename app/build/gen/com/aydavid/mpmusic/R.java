@@ -43,22 +43,22 @@ public final class R {
     }
     public static final class id {
         public static final int Lay_popmenu=0x7f070011;
-        public static final int albumArt=0x7f070033;
+        public static final int albumArt=0x7f070034;
         public static final int allplaylists=0x7f070010;
         public static final int backBut=0x7f07001d;
         public static final int backBut3=0x7f070014;
         public static final int but_showLyrics=0x7f070012;
         public static final int but_takeShot=0x7f070013;
-        public static final int containAll=0x7f07002f;
+        public static final int containAll=0x7f070030;
         public static final int controls_container=0x7f07001b;
         public static final int divide=0x7f070025;
-        public static final int etUserInput=0x7f070031;
+        public static final int etUserInput=0x7f070032;
         public static final int header=0x7f070000;
         public static final int headerArt=0x7f070008;
         public static final int iconsBar=0x7f070028;
-        public static final int imageViewLinearLayout=0x7f07002e;
-        public static final int item=0x7f070034;
-        public static final int item2=0x7f070035;
+        public static final int imageViewLinearLayout=0x7f07002f;
+        public static final int item=0x7f070035;
+        public static final int item2=0x7f070036;
         public static final int linLay_sV_sB=0x7f07000b;
         public static final int linear=0x7f070007;
         public static final int linear2=0x7f07000e;
@@ -66,7 +66,8 @@ public final class R {
         public static final int longl=0x7f070024;
         public static final int lyricsView=0x7f070022;
         public static final int lyricsViewContainer=0x7f070021;
-        public static final int mainLinearLayout=0x7f07002d;
+        public static final int lyricsViewScroll=0x7f07002d;
+        public static final int mainLinearLayout=0x7f07002e;
         public static final int nextBut=0x7f07001e;
         public static final int playlist1=0x7f07000f;
         public static final int relG=0x7f070015;
@@ -77,7 +78,7 @@ public final class R {
         public static final int searchV_editT=0x7f07002a;
         public static final int shuffleBut=0x7f07001c;
         public static final int songArtist=0x7f07001a;
-        public static final int songGen=0x7f070032;
+        public static final int songGen=0x7f070033;
         public static final int songIm=0x7f070016;
         public static final int songTitle=0x7f070019;
         public static final int tab_albums=0x7f070005;
@@ -86,7 +87,7 @@ public final class R {
         public static final int tab_mostplayed=0x7f070004;
         public static final int tab_playlists=0x7f070003;
         public static final int tabs=0x7f070001;
-        public static final int textView1=0x7f070030;
+        public static final int textView1=0x7f070031;
         public static final int text_SongsFrom=0x7f070009;
         public static final int text_alltracks=0x7f07000a;
         public static final int timer=0x7f070026;

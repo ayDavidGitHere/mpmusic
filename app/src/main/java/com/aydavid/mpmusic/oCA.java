@@ -47,7 +47,7 @@ public class oCA extends ArrayAdapter<song> {
 	View _view;
 	ViewGroup _viewG;
 	ArrayList<ImageView> aA;
-	ImageLoader imageLoader;
+	public ImageLoader imageLoader;
 	
 
 

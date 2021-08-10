@@ -23,7 +23,7 @@ public class MainUi
 	RelativeLayout relGen; 
 	SearchView searchV;
 	EditText searchV_editT;
-	MainActivity AppInstance;
+	com.aydavid.mpmusic.MainActivity AppInstance;
 	
 	boolean IsListOpened = false;
 	boolean IsSearchViewOpened = false;
@@ -376,6 +376,7 @@ public class MainUi
 										}
 										if(v.getId() == R.id.but_showLyrics){   
 											lyricsViewContainer.setVisibility( lyricsViewContainer.getVisibility() == View.VISIBLE?View.GONE:View.VISIBLE);
+											new com.aydavid.mpmusic.LyricsMC.LyricsLoader(AppInstance).DisplayLyrics((TextView) AppInstance.findViewById(R.id.lyricsView), Playerprops.NOW_PLAYING);
 										}
 									}//EO onClick
 								});
