@@ -231,7 +231,6 @@ public class MainActivity extends Activity
 			this.sendBroadcast(eventIntent);
 		}
 	}
-
 	public void addToQueue(int songPos){
 		if(playservice.isRunning == true){
 			Intent eventIntent = new Intent("QUEUE_ADD");
@@ -239,25 +238,18 @@ public class MainActivity extends Activity
 			this.sendBroadcast(eventIntent);
 		}
 	}
+	public void shuffleList(){
+		if(playservice.isRunning){
+			Intent eventIntent = new Intent("SHUFFLE_LIST");
+			this.sendBroadcast(eventIntent);
+		}
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-	
 	
 	
 	
 	int songImC = 1; 
 	int sVClicked = 1;
-	static int shClicked = 1;
 	int playPosition = 0;
 	int playDuration = 10000;
 	String songCol = "#FF5900";
@@ -277,6 +269,9 @@ public class MainActivity extends Activity
 	
 	
 	
+	
+	
+	
 
 	
 	
@@ -284,10 +279,41 @@ public class MainActivity extends Activity
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void Notifier(String t1, String t2, String t3, Bitmap bm, int invColor){
-                //NotificationManager   notificationMgr = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
-                //notificationMgr.cancel(0);//
-			  
+    
+	Intent intent = new Intent(this, MainActivity.class);
+	PendingIntent pi = PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+	Intent intentNext = new Intent("NEXT");   intentNext.setAction("NEXT_IT");
+	PendingIntent pIntent = PendingIntent.getBroadcast(this, 1, intentNext, 0);
+	Intent intentBack = new Intent("BACK");   intentBack.setAction("BACK_IT");
+	PendingIntent pIntent2 = PendingIntent.getBroadcast(this, 2, intentBack, 1);
+	Intent intentPause = new Intent("PAUSE");   intentPause.setAction("PAUSE_IT");
+	PendingIntent pIntent3 = PendingIntent.getBroadcast(this, 3, intentPause, 2);
+	Intent intentShuffle = new Intent("SHUFFLE");   intentPause.setAction("SHUFFLE_LIST");
+	PendingIntent shufflePI = PendingIntent.getBroadcast(this, 3, intentShuffle, 2);
+		
+	
+	
+	RemoteViews remoteView = new RemoteViews(this.getPackageName(), R.layout.notification_layout);
+	remoteView.setOnClickPendingIntent(R.id.but_back, pIntent2);
+	remoteView.setOnClickPendingIntent(R.id.but_next, pIntent);
+	remoteView.setOnClickPendingIntent(R.id.song_image, pIntent3);
+	remoteView.setOnClickPendingIntent(R.id.but_shuffle, shufflePI);
+	remoteView.setImageViewBitmap(R.id.song_image, bm);
+	remoteView.setTextViewText(R.id.song_title, t1);
+	remoteView.setTextViewText(R.id.song_artist, t2);
+	remoteView.setTextViewText(R.id.song_album, t3);
+	
 	Notification.Builder mBuilder = new Notification.Builder(this); // notification icon
 	mBuilder.setSmallIcon(R.drawable.m_lawn_transparent);//.setVisibility(View.GONE);
     mBuilder.setLargeIcon(bm);
@@ -298,35 +324,24 @@ public class MainActivity extends Activity
 	mBuilder.setPriority(Notification.PRIORITY_MAX);
     mBuilder.setSubText(t3);
 	mBuilder.setOngoing(true);
-			 
-			 
-	Intent intent = new Intent(this, MainActivity.class);
-	PendingIntent pi = PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+	mBuilder.setContent(remoteView);
 	mBuilder.setContentIntent(pi);
-
-			 Intent intentNext = new Intent("NEXT");   intentNext.setAction("NEXT_IT");
-			 PendingIntent pIntent = PendingIntent.getBroadcast(this, 1, intentNext, 0);
-			 
-			 Intent intentBack = new Intent("BACK");   intentBack.setAction("BACK_IT");
-			 PendingIntent pIntent2 = PendingIntent.getBroadcast(this, 2, intentBack, 1);
-			
-			 Intent intentPause = new Intent("PAUSE");   intentPause.setAction("PAUSE_IT");
-			 PendingIntent pIntent3 = PendingIntent.getBroadcast(this, 3, intentPause, 2);
-			 
-			 mBuilder.addAction(R.drawable.back, "",pIntent2);
-			 mBuilder.addAction(R.drawable.m_lawn_transparent, "",pIntent3);
-			 mBuilder.addAction(R.drawable.next, "",pIntent);
-			 
-			
-			  registerReceiver(receiver, new IntentFilter("NEXT_IT"));
-			  registerReceiver(receiver, new IntentFilter("BACK_IT"));
-			  registerReceiver(receiver, new IntentFilter("PAUSE_IT"));
-			  //sendBroadcast(intentNext);
-	          
+	/*
+	mBuilder.addAction(R.drawable.back, "",pIntent2);
+	mBuilder.addAction(R.drawable.m_lawn_transparent, "",pIntent3);
+	mBuilder.addAction(R.drawable.next, "",pIntent);
+	*/
+	
+	registerReceiver(receiver, new IntentFilter("NEXT_IT"));
+	registerReceiver(receiver, new IntentFilter("BACK_IT"));
+	registerReceiver(receiver, new IntentFilter("PAUSE_IT"));
+	registerReceiver(receiver, new IntentFilter("SHUFFLE_LIST"));
+	
+	Notification notification = mBuilder.build();
+	if (android.os.Build.VERSION.SDK_INT >= 16) {notification.bigContentView = remoteView;}
     NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-	//mNotificationManager.IMPORTANCE_HIGH
-    mNotificationManager.notify(0, mBuilder.build());
-	}
+    mNotificationManager.notify(0, notification);
+	}//EO 
 	       
 	
 			  
@@ -335,15 +350,33 @@ public class MainActivity extends Activity
 	BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			              //toaster("rt");
-			     if ( intent.getAction().equals("NEXT_IT")) {  //toaster("334");
-			goToNext();   }
-			     if ( intent.getAction().equals("BACK_IT")) {  //toaster("334");
-		    goToBack();   }
-			     if ( intent.getAction().equals("PAUSE_IT")) {  //toaster("334");
-			songImClicked(); }
+			if ( intent.getAction().equals("NEXT_IT")) {  //toaster("334");
+				goToNext();   
+			}
+			if ( intent.getAction().equals("BACK_IT")) {  //toaster("334");
+		    	goToBack();   
+			}
+			if ( intent.getAction().equals("PAUSE_IT")) {  //toaster("334");
+				songImClicked(); 
+			}
+			if ( intent.getAction().equals("SHUFFLE_LIST")) {
+				//shuffleList();
+			}
 		}
 	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -459,37 +492,6 @@ public class MainActivity extends Activity
 		// You can (and probably should) also display a dialog to notify the user
 	}
 
- @Override
- protected void onResume(){
- super.onResume();
-
- }
- @Override
- public void onPause() {
- // First call the "official" version of this method
- super.onPause();
- //Toast.makeText(this, "In onPause", Toast.LENGTH_SHORT).show();
-}
-@Override
-protected void onRestart()
-{
-// TODO: Implement this method
-super.onRestart();
-}
-@Override
-public void onDestroy() {
- // First call the "official" version of this method
- super.onDestroy();
- finish();
- //Toast.makeText(this, "In onDestroy", Toast.LENGTH_SHORT).show();
- 
-}
-
-
-
-
-
-
 
 
 
@@ -559,9 +561,61 @@ public void onDestroy() {
  
  
  
- 
+
+	@Override
+	protected void onResume(){
+		super.onResume();
+
+	}
+	@Override
+	public void onPause() {
+		// First call the "official" version of this method
+		super.onPause();
+		//Toast.makeText(this, "In onPause", Toast.LENGTH_SHORT).show();
+	}
+	@Override
+	protected void onRestart()
+	{
+// TODO: Implement this method
+		super.onRestart();
+	}
+	@Override
+	public void onDestroy() {
+		// First call the "official" version of this method
+		super.onDestroy();
+		finish();
+		//Toast.makeText(this, "In onDestroy", Toast.LENGTH_SHORT).show();
+
+	}
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
  
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

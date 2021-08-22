@@ -130,7 +130,7 @@ public class playservice extends Service
 			
 			if (intent.getAction().equals("INIT")) {
 				playIndex = MainActivity.playIndex;
-				shClicked = MainActivity.shClicked;
+				shClicked = 1;
 				copySongList = new ArrayList<song>();  
 				copySongList.addAll(Playerprops.SONG_LIST_CURRENT);
 				playfromQueue = true;

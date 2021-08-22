@@ -54,12 +54,16 @@ public class MainUi
 			g = Color.green(p);
 	    	b = Color.blue(p);
 			Uiprops.secondaryColor =Color.argb(255, r, g, b);
-			Uiprops.primaryColor =Color.argb(255, 255-r, 255-g, 255-b);
-			//toaster(r+";"+g+";"+b);
-			if(r>95&&r<135 && g>95&&g<135 && b>95&b<135){  
-				//make sire they are not a 111
-			    Uiprops.primaryColor =Color.argb(255, 255-r*2, 255-g*2, 255-b*2);
-			}
+			int R = 255-r; int G = 255-g; int B = 255-b;
+			//AppInstance.toaster(r+";"+g+";"+b);
+			//closeness to 127.5 correcting
+			//if(r>95&&r<135 && g>95&&g<135 && b>95&&b<135){  R = 255-r*2; G= 255-g*2; B=255-b*2;}
+			//individual closeness to 127.5 correcting
+			R = ((r>100&&r<130)?255-r*2:R);   G = ((g>100&&g<130)?255-g*2:G);		B = ((b>100&&b<130)?255-b*2:B);
+			
+			//auto closeness to 127.5 correcting
+			//R = 255-r*(1+(127-r/2)/127); G = 255-g*(1+(255-g)/127);   B = 255-b*(1+(127-b/2)/127);
+			Uiprops.primaryColor = Color.argb(255, R, G, B);
 		}
 		int colors [] = {Uiprops.primaryColor, Uiprops.secondaryColor};
 		return colors;
@@ -74,7 +78,8 @@ public class MainUi
 		int[] bgColors = getBgColor(abmp.getBitmap());
 		Uiprops.primaryColor =bgColors[0];
 		Uiprops.secondaryColor =bgColors[1];
-
+		
+		
 		transColor[1] = new ColorDrawable(Uiprops.secondaryColor); //set after change
 		TransitionDrawable trans = new TransitionDrawable(transColor);
 
