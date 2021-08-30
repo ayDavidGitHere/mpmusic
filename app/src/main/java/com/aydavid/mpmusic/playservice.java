@@ -10,6 +10,8 @@ import java.util.*;
 import java.text.*;
 import java.io.*;
 import java.util.concurrent.*;
+import android.graphics.drawable.*;
+import android.graphics.*;
 
 
 public class playservice extends Service
@@ -23,19 +25,16 @@ public class playservice extends Service
 	} 
 	// Binder given to clients
     public final IBinder binder = new LocalBinder();
-    // Registered callbacks
-    public static ServiceCallbacks serviceCallbacks;
-    // Class used for the client Binder.
     public class LocalBinder extends Binder {
         playservice getService() {
-            // Return this instance of MyService so clients can call public methods
-            return playservice.this;
+        	return playservice.this;
         }
     }
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
+	public static ServiceCallbacks serviceCallbacks;
     public void setCallbacks(ServiceCallbacks callbacks) {
         serviceCallbacks = callbacks;
     }
@@ -47,6 +46,11 @@ public class playservice extends Service
 
 	public static playservice instance;
 	public static boolean isRunning = false;
+	Bundle bundle;
+	static MediaPlayer mpServe;
+	
+	
+	
 	@Override
 	public void onCreate()
 	{
@@ -56,7 +60,6 @@ public class playservice extends Service
 		
 		
 	    try{
-		registerEventReceiver();
 		mpServe = new MediaPlayer();
 		mpServe.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 				@Override
@@ -83,11 +86,11 @@ public class playservice extends Service
 	}
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
-	{ 
-	
-
-		// TODO: Implement this method
-		return super.onStartCommand(intent, flags, startId);
+	{   
+		toast_serve("serve started");
+		INIT();
+		startForeground(1, notification);
+		return START_STICKY;//super.onStartCommand(intent, flags, startId);
 	}
 	@Override
 	public void onDestroy(){
@@ -96,90 +99,26 @@ public class playservice extends Service
 		super.onDestroy();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	Bundle bundle;
-	static MediaPlayer mpServe;
-	
-	private void registerEventReceiver() {
-		IntentFilter eventFilter = new IntentFilter();
-		eventFilter.addAction("player");
-		registerReceiver(eventReceiver, eventFilter);
-		registerReceiver(eventReceiver, new IntentFilter("INIT"));
-		registerReceiver(eventReceiver, new IntentFilter("PLAY_ITEM"));
-		registerReceiver(eventReceiver, new IntentFilter("PAUSE_SONG"));
-		registerReceiver(eventReceiver, new IntentFilter("RESUME_SONG"));
-		registerReceiver(eventReceiver, new IntentFilter("LIST_TONEXT"));
-		registerReceiver(eventReceiver, new IntentFilter("LIST_TOBACK"));
-		registerReceiver(eventReceiver, new IntentFilter("SHUFFLE_LIST"));
-		registerReceiver(eventReceiver, new IntentFilter("QUEUE_ADD"));
-	}
-	private BroadcastReceiver eventReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			//This code will be executed when the broadcast in activity B is launched
-		    bundle = intent.getExtras();
-			
-			
-			if (intent.getAction().equals("INIT")) {
-				playIndex = MainActivity.playIndex;
-				shClicked = 1;
-				copySongList = new ArrayList<song>();  
-				copySongList.addAll(Playerprops.SONG_LIST_CURRENT);
-				playfromQueue = true;
-				songQueue = new ArrayList<Integer>();
-				INIT();
-			}
-			if(intent.getAction().equals("PLAY_ITEM")){
-				song_item= (song) bundle.getSerializable("song_item");
-				playIndex = intent.getIntExtra("playIndex", 0);
-				PLAY_SONG(song_item);
-			}
-			if(intent.getAction().equals("PAUSE_SONG")){
-				PAUSE_SONG();
-			}
-			if(intent.getAction().equals("RESUME_SONG")){
-				RESUME_SONG();
-			}
-			if(intent.getAction().equals("LIST_TONEXT")){
-				LIST_TONEXT();
-			}
-			if(intent.getAction().equals("LIST_TOBACK")){
-				LIST_TOBACK();
-			}
-			if(intent.getAction().equals("SHUFFLE_LIST")){
-				SHUFFLE_LIST();
-			}
-			if(intent.getAction().equals("QUEUE_ADD")){
-				int songPos = intent.getIntExtra("songPos", 0);
-				addToQueue(songPos);
-			}
-			
-		}//EO ONrecieve
-	};
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    public void INIT(){
+	private void INIT(){
+		playIndex = 0;
+		shClicked = 1;
+		copySongList = new ArrayList<song>();  
+		copySongList = Playerprops.SONG_LIST_CURRENT;
+		playfromQueue = true;
+		songQueue = new ArrayList<Integer>();
+		INIT_Notifier();
 		focusLocks();
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+
 	
 	
 	
@@ -199,36 +138,35 @@ public class playservice extends Service
 	List<Integer> randList;
 	
 	
-	
 	public void PLAY_SONG(final song item){
 		NOW_PLAYING = item;
 		startPlaying = true;
 		mpServe.reset();
 
 		try{
-			playservice.serviceCallbacks.PLAY_UI(item);
 			mpServe.setDataSource( item.getSongData() );
 			mpServe.prepare();
 			RESUME_SONG();
+			if(serviceCallbacks!=null) playservice.serviceCallbacks.PLAY_UI(item);
 		}
 		catch(Exception e){ toast_serve(""+e); }
 
 	}//EO playsong
-	
+	public void PAUSEPLAY_SONG(){
+		if(mpServe.isPlaying())PAUSE_SONG();
+		else RESUME_SONG();
+	}
 	public void PAUSE_SONG(){
 		mpServe.pause();
-		playservice.serviceCallbacks.SONGIM_CLICKED(mpServe.isPlaying());
+		if(serviceCallbacks!=null)playservice.serviceCallbacks.SONGIM_CLICKED(mpServe.isPlaying());
 	}
 	public void RESUME_SONG(){
 		mpServe.start();   
 		if(playservice.serviceCallbacks!=null) playservice.serviceCallbacks.SONGIM_CLICKED(mpServe.isPlaying());
 	}
-	
 	public void SEEKTO_SONG(int position){
 		mpServe.seekTo(position);	
 	}
-	
-	
 	
 	public void LIST_TONEXT(){
 		ArrayList <song> itemA = Playerprops.SONG_LIST_CURRENT;
@@ -241,7 +179,7 @@ public class playservice extends Service
 					playIndex = randomQueue[shufflePlayIndex];
 				}
 				else{ playIndex = playIndex+1; }
-				if(playIndex <Playerprops.SONG_LIST_CURRENT.size()){  
+				if(playIndex <copySongList.size()){  
 					song itemE = itemA.get(copySongList.get(playIndex).getSongInd() );
 					PLAY_SONG(itemE);  
 				}
@@ -249,7 +187,7 @@ public class playservice extends Service
 			else if(playfromQueue){ 
 				playIndex = songQueue.get(0);
 				songQueue.remove(0);
-				if(playIndex <Playerprops.SONG_LIST_CURRENT.size()){  
+				if(playIndex <copySongList.size()){  
 					song itemE = itemA.get( playIndex );
 					PLAY_SONG(itemE);  
 				}
@@ -267,7 +205,7 @@ public class playservice extends Service
 			}
 			else{ playIndex = playIndex-1; }
 		}
-		if(playIndex <Playerprops.SONG_LIST_CURRENT.size()){  
+		if(playIndex <copySongList.size()){  
 			song itemE = itemA.get(copySongList.get(playIndex).getSongInd() );
 			PLAY_SONG(itemE);  
 		}
@@ -279,8 +217,6 @@ public class playservice extends Service
 			toast_serve(" Shuffle-play Is On ");}
 		else{ toast_serve(" Shuffle-play Is Off ");}
 	}
-
-	
 
     //Queue
 	public void addToQueue(int songPos){
@@ -300,6 +236,130 @@ public class playservice extends Service
 			randomQueue[ind] = (int) rt[ind];
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	
+	
+	
+
+	RemoteViews remoteView;
+	Notification notification;
+	Intent intent; PendingIntent pi;
+	Intent intentNext; PendingIntent pIntent;
+	Intent intentBack; PendingIntent pIntent2;
+	Intent intentPause; PendingIntent pIntent3;
+	Intent intentShuffle;  PendingIntent shufflePI;
+	Notification.Builder mBuilder;
+	public void INIT_Notifier(){
+		registerReceiver(receiver, new IntentFilter("NEXT_IT"));
+		registerReceiver(receiver, new IntentFilter("BACK_IT"));
+		registerReceiver(receiver, new IntentFilter("PAUSE_IT"));
+		registerReceiver(receiver, new IntentFilter("SHUFFLE_LIST"));
+
+		intent = new Intent(this, MainActivity.class);
+		pi = PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+		intentNext = new Intent("NEXT");   intentNext.setAction("NEXT_IT");
+		pIntent = PendingIntent.getBroadcast(this, 1, intentNext, 0);
+		intentBack = new Intent("BACK");   intentBack.setAction("BACK_IT");
+	    pIntent2 = PendingIntent.getBroadcast(this, 2, intentBack, 1);
+		intentPause = new Intent("PAUSE");   intentPause.setAction("PAUSE_IT");
+		pIntent3 = PendingIntent.getBroadcast(this, 3, intentPause, 2);
+		intentShuffle = new Intent("SHUFFLE");   intentPause.setAction("SHUFFLE_LIST");
+		shufflePI = PendingIntent.getBroadcast(this, 3, intentShuffle, 2);
+		
+		remoteView = new RemoteViews(this.getPackageName(), R.layout.notification_layout);
+		mBuilder = new Notification.Builder(this);
+		notification = mBuilder.build();
+	}
+	
+	public void Notify(String t1, String t2, String t3, Bitmap bm, int invColor, int color){
+		remoteView.setOnClickPendingIntent(R.id.but_back, pIntent2);
+		remoteView.setOnClickPendingIntent(R.id.but_next, pIntent);
+		remoteView.setOnClickPendingIntent(R.id.song_image, pIntent3);
+		remoteView.setOnClickPendingIntent(R.id.but_shuffle, shufflePI);
+		remoteView.setImageViewBitmap(R.id.song_image, bm);
+		remoteView.setTextViewText(R.id.song_title, t1);
+		remoteView.setTextViewText(R.id.song_artist, t2);
+		remoteView.setTextViewText(R.id.song_album, t3);
+		remoteView.setInt(R.id.song_image_layout, "setBackgroundColor", invColor);
+		//remoteView.setTextColor(R.id.song_title, color);remoteView.setTextColor(R.id.song_artist, color);remoteView.setTextColor(R.id.song_album, color);
+		//remoteView.setInt(R.id.but_back, "setColorFilter", color);remoteView.setInt(R.id.but_next, "setColorFilter", color);remoteView.setInt(R.id.but_shuffle, "setColorFilter", color);
+
+		mBuilder.setSmallIcon(R.drawable.m_lawn_transparent);//.setVisibility(View.GONE);
+		mBuilder.setLargeIcon(bm);
+		mBuilder.setContentTitle(""+t1); // title
+		mBuilder.setContentText(""+t2.toUpperCase()); // body message
+		mBuilder.setAutoCancel(false); // clear notification when clicke
+		mBuilder.setColor(invColor );
+		mBuilder.setPriority(Notification.PRIORITY_MAX);
+		mBuilder.setSubText(t3);
+		mBuilder.setOngoing(true);
+		mBuilder.setContent(remoteView);
+		mBuilder.setContentIntent(pi);
+		/*
+		 mBuilder.addAction(R.drawable.back, "",pIntent2);
+		 mBuilder.addAction(R.drawable.m_lawn_transparent, "",pIntent3);
+		 mBuilder.addAction(R.drawable.next, "",pIntent);
+		 */
+
+		notification = mBuilder.build();
+		if (android.os.Build.VERSION.SDK_INT >= 16) {notification.bigContentView = remoteView;}
+		NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(0, notification);
+	}//EO 
+
+
+
+
+
+	BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if ( intent.getAction().equals("NEXT_IT")) {  //toaster("334");
+				LIST_TONEXT();
+			}
+			if ( intent.getAction().equals("BACK_IT")) {  //toaster("334");
+		    	LIST_TOBACK();
+			}
+			if ( intent.getAction().equals("PAUSE_IT")) {  //toaster("334");
+				PAUSEPLAY_SONG();
+			}
+			if ( intent.getAction().equals("SHUFFLE_LIST")) {
+				//shuffleList();
+			}
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
 	
 	
 	
@@ -347,6 +407,14 @@ public class playservice extends Service
 
 	};
 	
+	
+	
+	
+	
+
+	final Object mFocusLock = new Object();
+	boolean mPlaybackDelayed = false;
+	boolean mResumeOnFocusGain = false;
 	public void focusLocks(){  
 		try{
 		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -376,9 +444,15 @@ public class playservice extends Service
 		}catch(Exception e){   toast_E(e); }
 	}
 	
-	final Object mFocusLock = new Object();
-	boolean mPlaybackDelayed = false;
-	boolean mResumeOnFocusGain = false;
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -392,8 +466,6 @@ public class playservice extends Service
 	public void toast_serve(String string){  
 		Toast.makeText(this, ""+string , 30000).show();
 	}
-
-	
 	public void toast_E(Exception e){
 			Toast.makeText(this, "at: "+e.getStackTrace()[0].getFileName()+"- "+e.getStackTrace()[0].getLineNumber()+"- e: "+e,  Toast.LENGTH_SHORT).show();
 	}
@@ -407,8 +479,6 @@ public class playservice extends Service
 				timestamp = dateFormat.format(new Date());
 				file = new File(getExternalFilesDir(null), "Playservice.crashLog_" + timestamp + ".txt");
 			}
-
-
 			file.createNewFile();;
 			// Write the stacktrace to the file
 			FileWriter writer = null;

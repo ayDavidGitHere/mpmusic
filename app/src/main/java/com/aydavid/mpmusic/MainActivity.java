@@ -63,14 +63,6 @@ public class MainActivity extends Activity
 		
 		
 		
-		if(playservice.isRunning == true){
-		toaster("Service is running");
-		Bundle bundle = new Bundle();
-		Intent eventIntent = new Intent("INIT");
-		eventIntent.putExtras(bundle);
-		this.sendBroadcast(eventIntent);
-        }
-		
 		mp = new MediaPlayer();
 		mp = playservice.mpServe;
 		}catch(Exception e){ toaster(""+e+"\n at:"+e.getStackTrace()[0].getFileName()+"\n"+e.getStackTrace()[0].getLineNumber()); }
@@ -97,7 +89,6 @@ public class MainActivity extends Activity
 	//CustomAdapter cA;  
 	static oCA cA;
 	song item;
-	static int playIndex = 0;
 	int popItemPos = 0;
 	int declareRand = 0;
 	static Boolean NOW_PLAYING_HAS_NO_BITMAP = true;
@@ -114,27 +105,18 @@ public class MainActivity extends Activity
 	
 	
 	
-	
-	
 
-	
-	
-	
-	public void toaster(String string){
-		Toast.makeText(this, string, 3000).show();
-	}
+	public void toaster(String string){		Toast.makeText(this, string, 3000).show();}
 	public void toaster_onUI(final String string){
 		new Thread(new Runnable() {	@Override  public void run() {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							toaster(string);
-						}	
-					});
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					toaster(string);
+				}	
+			});
 		}});
 	}
-	
-	
 	
 		Handler handler = new Handler();
 		Runnable runnable = new Runnable() {
@@ -178,6 +160,16 @@ public class MainActivity extends Activity
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	boolean PLAYING = false;
 	song LAST_LOGGED;
 	song NOW_PLAYING;
@@ -185,20 +177,11 @@ public class MainActivity extends Activity
 	
 	
 	//playbacks
-	public void songImClicked(){ 
-		if(PLAYING){ songPaused(); }
-		if(!PLAYING){ songResume(); }
-	}
-	public void songPaused(){ 
-		Intent eventIntent = new Intent("PAUSE_SONG");
-		this.sendBroadcast(eventIntent);
-	}
-	public void songResume(){
-		Intent eventIntent = new Intent("RESUME_SONG");
-		this.sendBroadcast(eventIntent);
+	public void songImClicked(){
+		playservice.PAUSEPLAY_SONG();
 	}
 	public void setSongAlpha(boolean PLAYING){ 
-	    this.PLAYING = PLAYING;
+	    this.PLAYING = mp.isPlaying();
 		if(PLAYING){  mainUi.songIm.setAlpha(0.95f); }
 		if(!PLAYING){ mainUi.songIm.setAlpha(0.35f); }
 	}
@@ -207,42 +190,22 @@ public class MainActivity extends Activity
 	
 	//   CONTRO,,LS 
 	public void PLAY_SONG(final song item){
-		if(playservice.isRunning == true){
-			Bundle bundle = new Bundle();
-		    bundle.putSerializable("song_item", item);
-			Intent eventIntent = new Intent("PLAY_ITEM");
-			eventIntent.putExtra("playIndex", playIndex);
-			eventIntent.putExtras(bundle);
-			this.sendBroadcast(eventIntent);
-		}
+		playservice.PLAY_SONG(item);
 	}
 	public void seekTo(int position){
 		mp.seekTo(position);	
 	}
 	public void goToNext(){
-		if(playservice.isRunning == true){
-			Intent eventIntent = new Intent("LIST_TONEXT");
-			this.sendBroadcast(eventIntent);
-		}
+		playservice.LIST_TONEXT();
 	}
 	public void goToBack(){
-		if(playservice.isRunning == true){
-			Intent eventIntent = new Intent("LIST_TOBACK");
-			this.sendBroadcast(eventIntent);
-		}
+		playservice.LIST_TOBACK();
 	}
 	public void addToQueue(int songPos){
-		if(playservice.isRunning == true){
-			Intent eventIntent = new Intent("QUEUE_ADD");
-			eventIntent.putExtra("songPos", songPos);
-			this.sendBroadcast(eventIntent);
-		}
+		playservice.addToQueue(songPos);
 	}
 	public void shuffleList(){
-		if(playservice.isRunning){
-			Intent eventIntent = new Intent("SHUFFLE_LIST");
-			this.sendBroadcast(eventIntent);
-		}
+		playservice.SHUFFLE_LIST();
 	}
 
 	
@@ -286,84 +249,6 @@ public class MainActivity extends Activity
 	
 	
 	
-	
-	
-	
-	public void Notifier(String t1, String t2, String t3, Bitmap bm, int invColor){
-    
-	Intent intent = new Intent(this, MainActivity.class);
-	PendingIntent pi = PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-	Intent intentNext = new Intent("NEXT");   intentNext.setAction("NEXT_IT");
-	PendingIntent pIntent = PendingIntent.getBroadcast(this, 1, intentNext, 0);
-	Intent intentBack = new Intent("BACK");   intentBack.setAction("BACK_IT");
-	PendingIntent pIntent2 = PendingIntent.getBroadcast(this, 2, intentBack, 1);
-	Intent intentPause = new Intent("PAUSE");   intentPause.setAction("PAUSE_IT");
-	PendingIntent pIntent3 = PendingIntent.getBroadcast(this, 3, intentPause, 2);
-	Intent intentShuffle = new Intent("SHUFFLE");   intentPause.setAction("SHUFFLE_LIST");
-	PendingIntent shufflePI = PendingIntent.getBroadcast(this, 3, intentShuffle, 2);
-		
-	
-	
-	RemoteViews remoteView = new RemoteViews(this.getPackageName(), R.layout.notification_layout);
-	remoteView.setOnClickPendingIntent(R.id.but_back, pIntent2);
-	remoteView.setOnClickPendingIntent(R.id.but_next, pIntent);
-	remoteView.setOnClickPendingIntent(R.id.song_image, pIntent3);
-	remoteView.setOnClickPendingIntent(R.id.but_shuffle, shufflePI);
-	remoteView.setImageViewBitmap(R.id.song_image, bm);
-	remoteView.setTextViewText(R.id.song_title, t1);
-	remoteView.setTextViewText(R.id.song_artist, t2);
-	remoteView.setTextViewText(R.id.song_album, t3);
-	
-	Notification.Builder mBuilder = new Notification.Builder(this); // notification icon
-	mBuilder.setSmallIcon(R.drawable.m_lawn_transparent);//.setVisibility(View.GONE);
-    mBuilder.setLargeIcon(bm);
-	mBuilder.setContentTitle(""+t1); // title
-	mBuilder.setContentText(""+t2.toUpperCase()); // body message
-	mBuilder.setAutoCancel(false); // clear notification when clicke
-	mBuilder.setColor(invColor );
-	mBuilder.setPriority(Notification.PRIORITY_MAX);
-    mBuilder.setSubText(t3);
-	mBuilder.setOngoing(true);
-	mBuilder.setContent(remoteView);
-	mBuilder.setContentIntent(pi);
-	/*
-	mBuilder.addAction(R.drawable.back, "",pIntent2);
-	mBuilder.addAction(R.drawable.m_lawn_transparent, "",pIntent3);
-	mBuilder.addAction(R.drawable.next, "",pIntent);
-	*/
-	
-	registerReceiver(receiver, new IntentFilter("NEXT_IT"));
-	registerReceiver(receiver, new IntentFilter("BACK_IT"));
-	registerReceiver(receiver, new IntentFilter("PAUSE_IT"));
-	registerReceiver(receiver, new IntentFilter("SHUFFLE_LIST"));
-	
-	Notification notification = mBuilder.build();
-	if (android.os.Build.VERSION.SDK_INT >= 16) {notification.bigContentView = remoteView;}
-    NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-    mNotificationManager.notify(0, notification);
-	}//EO 
-	       
-	
-			  
-			  
-	
-	BroadcastReceiver receiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if ( intent.getAction().equals("NEXT_IT")) {  //toaster("334");
-				goToNext();   
-			}
-			if ( intent.getAction().equals("BACK_IT")) {  //toaster("334");
-		    	goToBack();   
-			}
-			if ( intent.getAction().equals("PAUSE_IT")) {  //toaster("334");
-				songImClicked(); 
-			}
-			if ( intent.getAction().equals("SHUFFLE_LIST")) {
-				//shuffleList();
-			}
-		}
-	};
 	
 	
 	
@@ -432,7 +317,7 @@ public class MainActivity extends Activity
 					//new logMostPlayed().logMostPlayed(MainActivity.this, item.getSongData());
 					mainUi.uIChangeOnPlay(item);
 					cA.notifyDataSetChanged();
-					Notifier(item.getSongArtist(), item.getSongTitle(), item.getSongAlbum(), bitmap, Uiprops.secondaryColor);
+					playservice.Notify(item.getSongArtist(), item.getSongTitle(), item.getSongAlbum(), bitmap, Uiprops.secondaryColor, Uiprops.primaryColor);
 				}});
 			}}).start();
 			
@@ -508,12 +393,6 @@ public class MainActivity extends Activity
     @Override
     protected void onStop() {
         super.onStop();
-        // Unbind from service
-        if (bound) {
-            //playservice.setCallbacks(null); // unregister
-            //unbindService(serviceConnection);
-            //bound = false;
-        }
     }
     /** Callbacks for service binding, passed to bindService() */
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -582,6 +461,11 @@ public class MainActivity extends Activity
 	@Override
 	public void onDestroy() {
 		// First call the "official" version of this method
+		if (bound) {
+           	playservice.setCallbacks(null); // unregister
+            unbindService(serviceConnection);
+            bound = false;
+        }
 		super.onDestroy();
 		finish();
 		//Toast.makeText(this, "In onDestroy", Toast.LENGTH_SHORT).show();

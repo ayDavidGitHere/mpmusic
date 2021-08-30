@@ -46,6 +46,7 @@ public class ImageLoader{
 				else {
 					queuePhoto(url, imageView);
 					imageView.setImageResource(stub);
+					//LoadedBitmap = stub;;
 					BitmapIsFound = false;
 				}
 			}//EO else

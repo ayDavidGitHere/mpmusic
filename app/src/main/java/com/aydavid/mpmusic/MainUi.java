@@ -57,9 +57,9 @@ public class MainUi
 			int R = 255-r; int G = 255-g; int B = 255-b;
 			//AppInstance.toaster(r+";"+g+";"+b);
 			//closeness to 127.5 correcting
-			//if(r>95&&r<135 && g>95&&g<135 && b>95&&b<135){  R = 255-r*2; G= 255-g*2; B=255-b*2;}
+			if(r>95&&r<135 && g>95&&g<135 && b>95&&b<135){		R = 255-r*2; G= 255-g*2; B=255-b*2;		}
 			//individual closeness to 127.5 correcting
-			R = ((r>100&&r<130)?255-r*2:R);   G = ((g>100&&g<130)?255-g*2:G);		B = ((b>100&&b<130)?255-b*2:B);
+			//R = ((r>100&&r<130)?255-r*2:R);   G = ((g>100&&g<130)?255-g*2:G);		B = ((b>100&&b<130)?255-b*2:B);
 			
 			//auto closeness to 127.5 correcting
 			//R = 255-r*(1+(127-r/2)/127); G = 255-g*(1+(255-g)/127);   B = 255-b*(1+(127-b/2)/127);
@@ -312,11 +312,10 @@ public class MainUi
 					//this is the way to find selected object/item
 					pos = pos-1;
 					if(pos>= 0){
-						AppInstance.playIndex = pos;
+						playservice.instance.playIndex = pos;
 						song item = (song) adapterView.getItemAtPosition(pos);
 						pos = item.getSongInd();   
 						item =  Playerprops.SONG_LIST_ALL.get( pos );  //new type //get from first song list
-						//playSong(item);
 						AppInstance.PLAY_SONG(item);
 					}//EO if
 				}
@@ -404,8 +403,7 @@ public class MainUi
 		shuffleBut.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					Intent eventIntent = new Intent("SHUFFLE_LIST");
-					AppInstance.sendBroadcast(eventIntent);
+					AppInstance.shuffleList();
 				}});
 
 		nextBut.setOnClickListener(new View.OnClickListener() {
