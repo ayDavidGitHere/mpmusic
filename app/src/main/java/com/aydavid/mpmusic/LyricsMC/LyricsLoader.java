@@ -1,11 +1,37 @@
 package com.aydavid.mpmusic.LyricsMC;
+
 import android.content.*;
 import android.widget.*;
 import com.aydavid.mpmusic.*;
+import android.os.*;
+import android.content.Context;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.*;
+import org.json.*;
+import java.util.*;
+import java.net.*;
+import android.net.*;
+
+
+
+
+
+
 
 public class LyricsLoader
-{	
-	
+{
 
 	String lyricsString_Model = 
 	"Yeah, yeah, yeah (DJ Durel)\n\n"+
@@ -123,16 +149,254 @@ public class LyricsLoader
 	
 	
 	
+	
+	
+	LyricsLoader context;
+	Context appContext;
+	String requestUrl;
 	public LyricsLoader(Context _context){
-		
+		this.context = this;
+		this.appContext = _context;
 	}
 	public void DisplayLyrics(TextView lyricsView, song song){
-		lyricsView.setText(GetLyrics(song));
+	    AsyncLyricsLoader Loader = (new AsyncLyricsLoader());
+		Loader.SetView(lyricsView);
+		Loader.execute(song);
 	}//EO
 	public String GetLyrics(song song){
 		String lyricsString = this.lyricsString_Model;
 		return lyricsString;
 	}//EO GetLyrics
+    
+    private String fetchLyrics(song song) {
+        try {
+			String urlString = 
+			"https://musicdownloadmp3.herokuapp.com/api/getlyrics_dfi?query="
+			+song.getSongArtist()
+			+" "
+			+song.getSongTitle()
+			;
+            
+            URL url= new URL(urlString);
+            URI uri = new URI(url.getProtocol(),
+            url.getUserInfo(),
+            IDN.toASCII(url.getHost()),
+            url.getPort(),
+            url.getPath(),
+            url.getQuery(),
+            url.getRef());
+            String correctEncodedURL = uri.toASCIIString(); 
+			context.requestUrl = correctEncodedURL;
+			//
+			
+			
+			
+			
+            URL urlObj = new URL(context.requestUrl);
+            HttpURLConnection urlConnection 
+            = (HttpURLConnection) urlObj.openConnection();
+            HttpURLConnection c = urlConnection;
+            c.setRequestMethod("GET");
+            c.setRequestMethod("GET");
+            c.setRequestProperty("Content-length", "0");
+            c.setUseCaches(false);
+            c.setAllowUserInteraction(false);
+            c.setConnectTimeout(50000);
+            c.setReadTimeout(50000);
+            c.connect();
+            int status = c.getResponseCode();
+            switch (status) {
+                case 200:
+                case 201: 
+                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line+"\n");
+                    }
+                    br.close();
+                    return sb.toString();
+            }
+            return "{error: true, status: "+status+"}";
+        } catch (Exception e) {
+            //Toast.makeText(appContext, "Failed downloading " + url + " "+ e.toString(), 2000).show();
+            return "{error: true, e: "+e.toString()+"}";
+        }
+    }
+    
+    public void SetTextView(TextView tview, String content)
+	{
+		try{
+			JSONObject jObj=  new JSONObject(); 
+			if(content != "" ){   jObj = new JSONObject(content); } 
+			Lyric lyric = new Lyric();
+			Iterator songsKeyInJson = jObj.keys();
+			while (songsKeyInJson.hasNext()){   
+				//iterator
+				String currentKey = (String) songsKeyInJson.next(); 
+				if(currentKey.compareToIgnoreCase("error")==0) lyric.error = (jObj.getBoolean(currentKey));
+				if(currentKey.compareToIgnoreCase("status")==0) lyric.status = (jObj.getString(currentKey));
+				if(currentKey.compareToIgnoreCase("value")==0) lyric.value = new JSONObject(jObj.getString(currentKey));
+
+				//sorter
+				//EO while
+			}//EO while
+			;;;;//System.out.println("Error: "+lyric.error);
+			;;;;//System.out.println("Value: "+lyric.value);
+			lyric.setValues();
+			;;;;//System.out.println("\n THIS IS THE FINAL LYRICS \n ");
+		    ;;;;//System.out.println(lyric.linesConcated);
+		    tview.setText(lyric.linesConcated);
+		}
+		catch(Exception e){
+			;;;;//System.out.println("\n Exception: \n"+e);
+		}
+	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     * @ AsyncLyricsLoader
+     **/
+    
+    
+	
+	public class AsyncLyricsLoader extends AsyncTask<song, Void, String> {
+		@Override
+		protected void onPreExecute(){
+			// This runs on the UI thread before the background thread executes.
+			super.onPreExecute();
+			// Do pre-thread tasks such as initializing variables.
+		
+		}
+		@Override
+		protected String doInBackground(song[] songs)
+		{
+			// TODO: Implement this method
+			String result = "";
+			result = fetchLyrics(songs[0]);         
+			return result;
+		}
+		@Override
+		protected void onProgressUpdate(Void...p) {
+			// Runs on the UI thread after publishProgress is invoked
+		} 
+		@Override
+		protected void onPostExecute(String lyrics_json)
+		{
+			// TODO: Implement this method
+			super.onPostExecute(lyrics_json);
+			// This runs on the UI thread after complete execution of the doInBackground() method
+			// This function receives result(String s) returned from the doInBackground() method.
+			// Update UI with the found string.
+			Toast.makeText(context.appContext, context.requestUrl, 2000).show();
+            context.SetTextView(this.view, lyrics_json);
+		}
+		TextView view;
+		public void SetView (TextView view){
+			this.view = view;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public class Lyric {
+	    public boolean error;
+	    public String status;
+	    public String e; 
+	    public JSONObject value;
+	    public String linesConcated;
+	    public String id;
+	    public JSONArray linesArray;
+		public Lyric (){
+
+		}
+		public void setValues(){
+			this.linesConcated = "";
+			if(this.error) return;
+			try{
+				this.id = value.getString("LYRICS_ID");
+				this.linesArray = value.getJSONArray("LYRICS_SYNC_JSON");
+				;;;;//System.out.println("\n\nLyrics.setValues:\n ");
+				;;;;//System.out.println("Lyrics Id: "+id);
+				;;;;//System.out.println("LyricsArrayOfLines: "+ this.linesArray);
+				//EO while
+				for (int i = 0, size = linesArray.length(); i < size; i++)
+				{	
+					this.linesConcated += "\n\n"+linesArray.getJSONObject(i).getString("line");
+				}
+			}catch(Exception e){
+				this.linesConcated = "SORRY, LYRICS NOT FOUND";
+				;;;;//System.out.println("\n Exception At setLines: \n"+e);
+			}
+		}
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

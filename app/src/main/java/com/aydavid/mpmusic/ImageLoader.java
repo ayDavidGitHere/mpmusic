@@ -30,6 +30,13 @@ public class ImageLoader{
 			executorService=Executors.newFixedThreadPool(5); // max number of worker threads
 		}
 		public void DisplayImage(String url, ImageView imageView, int stub) {
+		    this.iDisplayImage(url, imageView, stub, false);
+		}
+		public void DisplayImage(String url, ImageView imageView, int stub, Boolean setWallpaper) {
+		    this.iDisplayImage(url, imageView, stub, setWallpaper);
+		}
+		
+		public void iDisplayImage(String url, ImageView imageView, int stub, Boolean setWallpaper) {
 			try{
 			imageViews.put(imageView, url);
 			Bitmap CachedBitmap = memoryCache.get(url);
@@ -40,6 +47,11 @@ public class ImageLoader{
 				if (newBitmap !=null){ 
 					memoryCache.put(url, newBitmap); 
 					imageView.setImageBitmap(newBitmap);
+					if(setWallpaper){try{
+					Intent wallpaperIntent = new Intent();
+					wallpaperIntent.setAction(Intent.ACTION_SET_WALLPAPER);
+					context.startActivity(wallpaperIntent);
+					}catch(Exception e){  }}//EO if
 					LoadedBitmap = newBitmap;
 					BitmapIsFound = true;
 				}

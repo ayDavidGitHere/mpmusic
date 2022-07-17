@@ -8,7 +8,7 @@
     
     
     <ImageView
-		android:src="@drawable/m_lawn"
+		android:src="@drawable/cover_image"
 		android:layout_width="match_parent"
 		android:layout_height="500dp"
 		android:id="@+id/songIm"
@@ -137,13 +137,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:id="@+id/lyricsView"
-			android:text="God, I know I'm nothin' like them \n \n
-		I'm just different, I'm built different \n \n
-		I feel as if we all got a purpose and we all special in some way\n \n
-		But me, my potential is unmatched\n \n
-		I'm the chosen one\n \n
-		But only time'll tell, long live the guys\n \n
-		Uh"
+			android:text="... Lyrics loading ... please wait"
 			android:textSize="45px"
 			android:textStyle="bold"
 			android:textColor="#ffffff"
@@ -203,20 +197,20 @@
 	<!--$$$$$-->
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="25dp"
+		android:layout_height="45dp"
 		android:orientation="vertical"
 		android:layout_alignParentTop="true"
 		android:padding="0dp"
 		android:id="@+id/topBar"
 		android:elevation="32dp"
 		android:background="@drawable/back_list"
-		android:weightSum="4">
+		android:weightSum="5">
 		
 		
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			android:layout_weight="3"
+			android:layout_weight="4"
 			android:orientation="horizontal"
 			android:layout_alignParentTop="true"
 			android:padding="0dp"
@@ -272,6 +266,7 @@
 				android:layout_weight="1"
 				android:src="@drawable/search" 
 				android:id="@+id/searchBut"
+			    android:padding="5dp"
 			/>
 		</LinearLayout>
 		

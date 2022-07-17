@@ -231,7 +231,7 @@ public class oCA extends ArrayAdapter<song> {
 						new Thread(new Runnable() { //run on thread;
 								@Override
 								public void run(){
-									new logMostPlayed().showMostPlayed(MainActivity, thisClass);
+									//new logMostPlayed().showMostPlayed(MainActivity, thisClass);
 								}}).start();;
 						for(TextView tab: tabsFinal){ 
 							tab.setBackgroundColor(tint1);

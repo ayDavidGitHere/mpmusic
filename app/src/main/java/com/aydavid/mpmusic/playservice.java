@@ -265,23 +265,28 @@ public class playservice extends Service
 	Intent intentBack; PendingIntent pIntent2;
 	Intent intentPause; PendingIntent pIntent3;
 	Intent intentShuffle;  PendingIntent shufflePI;
+	Intent intentCancel; PendingIntent cancelPI;
 	Notification.Builder mBuilder;
 	public void INIT_Notifier(){
 		registerReceiver(receiver, new IntentFilter("NEXT_IT"));
 		registerReceiver(receiver, new IntentFilter("BACK_IT"));
 		registerReceiver(receiver, new IntentFilter("PAUSE_IT"));
 		registerReceiver(receiver, new IntentFilter("SHUFFLE_LIST"));
+		registerReceiver(receiver, new IntentFilter("CANCEL_PLAYER"));
+		
 
 		intent = new Intent(this, MainActivity.class);
-		pi = PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+		pi = PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK ); 
 		intentNext = new Intent("NEXT");   intentNext.setAction("NEXT_IT");
 		pIntent = PendingIntent.getBroadcast(this, 1, intentNext, 0);
 		intentBack = new Intent("BACK");   intentBack.setAction("BACK_IT");
 	    pIntent2 = PendingIntent.getBroadcast(this, 2, intentBack, 1);
 		intentPause = new Intent("PAUSE");   intentPause.setAction("PAUSE_IT");
 		pIntent3 = PendingIntent.getBroadcast(this, 3, intentPause, 2);
-		intentShuffle = new Intent("SHUFFLE");   intentPause.setAction("SHUFFLE_LIST");
-		shufflePI = PendingIntent.getBroadcast(this, 3, intentShuffle, 2);
+		intentShuffle = new Intent("SHUFFLE");   intentShuffle.setAction("SHUFFLE_LIST");
+		shufflePI = PendingIntent.getBroadcast(this, 4, intentShuffle, 3);
+		intentCancel = new Intent("CANCEL");   intentCancel.setAction("CANCEL_PLAYER");
+		cancelPI = PendingIntent.getBroadcast(this, 5, intentCancel, 4);
 		
 		remoteView = new RemoteViews(this.getPackageName(), R.layout.notification_layout);
 		mBuilder = new Notification.Builder(this);
@@ -293,6 +298,7 @@ public class playservice extends Service
 		remoteView.setOnClickPendingIntent(R.id.but_next, pIntent);
 		remoteView.setOnClickPendingIntent(R.id.song_image, pIntent3);
 		remoteView.setOnClickPendingIntent(R.id.but_shuffle, shufflePI);
+		remoteView.setOnClickPendingIntent(R.id.but_cancel, cancelPI);
 		remoteView.setImageViewBitmap(R.id.song_image, bm);
 		remoteView.setTextViewText(R.id.song_title, t1);
 		remoteView.setTextViewText(R.id.song_artist, t2);
@@ -301,7 +307,7 @@ public class playservice extends Service
 		//remoteView.setTextColor(R.id.song_title, color);remoteView.setTextColor(R.id.song_artist, color);remoteView.setTextColor(R.id.song_album, color);
 		//remoteView.setInt(R.id.but_back, "setColorFilter", color);remoteView.setInt(R.id.but_next, "setColorFilter", color);remoteView.setInt(R.id.but_shuffle, "setColorFilter", color);
 
-		mBuilder.setSmallIcon(R.drawable.m_lawn_transparent);//.setVisibility(View.GONE);
+		mBuilder.setSmallIcon(R.drawable.cover_image);//.setVisibility(View.GONE);
 		mBuilder.setLargeIcon(bm);
 		mBuilder.setContentTitle(""+t1); // title
 		mBuilder.setContentText(""+t2.toUpperCase()); // body message
@@ -341,7 +347,10 @@ public class playservice extends Service
 				PAUSEPLAY_SONG();
 			}
 			if ( intent.getAction().equals("SHUFFLE_LIST")) {
-				//shuffleList();
+				SHUFFLE_LIST();
+			}
+			if ( intent.getAction().equals("CANCEL_PLAYER")) {
+				stopSelf();
 			}
 		}
 	};

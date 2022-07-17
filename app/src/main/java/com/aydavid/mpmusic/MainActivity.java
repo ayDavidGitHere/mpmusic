@@ -105,7 +105,11 @@ public class MainActivity extends Activity
 	
 	
 	
-
+    
+    
+    
+    
+    
 	public void toaster(String string){		Toast.makeText(this, string, 3000).show();}
 	public void toaster_onUI(final String string){
 		new Thread(new Runnable() {	@Override  public void run() {
@@ -131,7 +135,7 @@ public class MainActivity extends Activity
 							@Override
 								public void run(){
 									LAST_LOGGED = Playerprops.NOW_PLAYING;
-									new logMostPlayed().logMostPlayed(MainActivity.this, Playerprops.NOW_PLAYING.getSongData());
+									//new logMostPlayed().logMostPlayed(MainActivity.this, Playerprops.NOW_PLAYING.getSongData());
 						        }
 						    }).start();
 						}
@@ -306,7 +310,7 @@ public class MainActivity extends Activity
 			// Update UI with the found string.
 			
 			ImageLoader imageLoader = cA.imageLoader;//new ImageLoader(MainActivity.this);
-			imageLoader.DisplayImage(_songItem.getSongData(), mainUi.songIm, R.drawable.cover_image);
+			imageLoader.DisplayImage(_songItem.getSongData(), mainUi.songIm, R.drawable.cover_image, true);
 			final Bitmap bitmap = imageLoader.LoadedBitmap;
 			if(imageLoader.BitmapIsFound){	NOW_PLAYING_HAS_NO_BITMAP= false;   }
 			else{ NOW_PLAYING_HAS_NO_BITMAP = true;    }

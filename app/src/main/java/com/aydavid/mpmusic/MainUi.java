@@ -252,7 +252,7 @@ public class MainUi
 		int mIntDur = ( (int)(mpDur/(1000*60))*60 );
 		String playPositionString = (int) (mpPos/(1000*60)  )+": "+ (doubPos-mIntPos <10?"0":"") +(doubIPos-mIntPos);
 		String playDurationString = (int) (mpDur/(1000*60)  )+": "+ (doubDur-mIntDur <10?"0":"") +(doubIDur-mIntDur);
-		timer.setText( " "+" "+" "+playDurationString + " _ " +playPositionString+" "+" "+" " );
+		timer.setText( " "+" "+" "+playDurationString + " --- " +playPositionString+" "+" "+" " );
 		timer.setTextSize(12);
 	}
 
