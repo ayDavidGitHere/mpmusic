@@ -18,6 +18,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Look for gradlew
+        run: find / -type f -name "gradlew"
+      - name: Look for gradlew
+        run: find / -type f -name "./gradle"
       - name: Build APK
         run: bash gradlew assembleDebug --stacktrace
       - name: Upload APK
