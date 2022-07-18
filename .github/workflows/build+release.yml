@@ -18,6 +18,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: add gradle class
+        run: gradle wrapper
       - name: Build APK
         run: bash gradle assembleDebug --stacktrace
       - name: Upload APK
