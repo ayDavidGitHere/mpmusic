@@ -19,11 +19,11 @@ jobs:
         with:
           java-version: 1.8
       - name: Look for gradlew
-        run: find / -type f -name "gradlew"
-      - name: Look for gradlew
-        run: find / -type f -name "./gradle"
+        run: find / -type f -name "gradlew" 2>/dev/null
+      - name: Look for gradle
+        run: find / -type f -name "gradle" 2>/dev/null
       - name: Build APK
-        run: bash gradlew assembleDebug --stacktrace
+        run: bash gradle assembleDebug --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v1
         with:
