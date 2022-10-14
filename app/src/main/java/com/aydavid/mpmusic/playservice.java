@@ -87,10 +87,20 @@ public class playservice extends Service
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{   
-		toast_serve("serve started");
+	    service_startid = startId;
+		//toast_serve("serve started");
+        if (intent != null) {
+            final String action = intent.getAction();
+            if ("CANCEL_PLAYER".equals(action)) {
+                releaseServiceUiAndStop();
+                return START_NOT_STICKY;
+            }
+            //handleCommandIntent(intent);
+        }
 		INIT();
 		startForeground(1, notification);
-		return START_STICKY;//super.onStartCommand(intent, flags, startId);
+		return START_NOT_STICKY;
+		//super.onStartCommand(intent, flags, startId);
 	}
 	@Override
 	public void onDestroy(){
@@ -109,6 +119,24 @@ public class playservice extends Service
 		INIT_Notifier();
 		focusLocks();
 	}
+	private void releaseServiceUiAndStop(){
+	    if (mpServe.isPlaying()) {
+            return;
+        }
+        cancelNotification();
+        mAudioManager.abandonAudioFocus(audioFocusChangeListener);
+        stopSelf(service_startid);
+	}
+	public void cancelNotification(){
+       stopForeground(true);
+       mNotificationManager.cancel(hashCode());
+       toast_serve("");
+	}
+	//service
+	public int service_startid = -1;
+	
+	
+	
 	
 	
 	
@@ -260,6 +288,7 @@ public class playservice extends Service
 
 	RemoteViews remoteView;
 	Notification notification;
+	NotificationManager mNotificationManager;
 	Intent intent; PendingIntent pi;
 	Intent intentNext; PendingIntent pIntent;
 	Intent intentBack; PendingIntent pIntent2;
@@ -325,9 +354,10 @@ public class playservice extends Service
 		 */
 
 		notification = mBuilder.build();
+        int notificationId = hashCode();
 		if (android.os.Build.VERSION.SDK_INT >= 16) {notification.bigContentView = remoteView;}
-		NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(0, notification);
+	    mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(notificationId, notification);
 	}//EO 
 
 
@@ -350,7 +380,8 @@ public class playservice extends Service
 				SHUFFLE_LIST();
 			}
 			if ( intent.getAction().equals("CANCEL_PLAYER")) {
-				stopSelf();
+				PAUSEPLAY_SONG();
+				releaseServiceUiAndStop();
 			}
 		}
 	};
@@ -424,9 +455,10 @@ public class playservice extends Service
 	final Object mFocusLock = new Object();
 	boolean mPlaybackDelayed = false;
 	boolean mResumeOnFocusGain = false;
+	AudioManager mAudioManager;
 	public void focusLocks(){  
 		try{
-		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 		AudioAttributes mPlaybackAttributes = new AudioAttributes.Builder()
 			.setUsage(AudioAttributes.USAGE_MEDIA)
 			.setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)

@@ -78,6 +78,16 @@ public class MainUi
 		int[] bgColors = getBgColor(abmp.getBitmap());
 		Uiprops.primaryColor =bgColors[0];
 		Uiprops.secondaryColor =bgColors[1];
+		/*
+		ArrayList <PorterDuff.Mode> pdms = ArrayList<PorterDuff.Mode>;
+		pdms.add(PorterDuff.Mode.SRC_ATOP);
+		pdms.add(PorterDuff.Mode.SRC);
+		pdms.add(PorterDuff.Mode.XOR);
+		pdms.add(PorterDuff.Mode.SRC);
+		pdms.add(PorterDuff.Mode.SRC_ATOP);
+		pdms.add(PorterDuff.Mode.SRC);
+		*/
+		
 		
 		
 		transColor[1] = new ColorDrawable(Uiprops.secondaryColor); //set after change
@@ -90,8 +100,11 @@ public class MainUi
 		timerBar.setBackgroundColor(Uiprops.primaryColor);
 		divide.setColorFilter(Uiprops.primaryColor);
 		timer.setTextColor(Uiprops.primaryColor);
-		timer.getBackground().setColorFilter(Uiprops.primaryColor, PorterDuff.Mode.SRC_ATOP);
-		timer.getBackground().setAlpha(255/2);
+		timer.getBackground().setTint(Uiprops.primaryColor);//  setColorFilter(Uiprops.primaryColor, PorterDuff.Mode.DST_IN);//_ATOP);
+		timer.getBackground().setAlpha((int)(255/1.5));
+		timer.setTextSize(15);
+		
+		
 		if(UI_LAYOUT_TYPE_INDEX == 2){ /*we need sleeker soluyion*/
 			((ViewGroup)backBut.getParent()).getBackground().setColorFilter(Uiprops.primaryColor, PorterDuff.Mode.SRC_ATOP);
 			((ViewGroup)backBut.getParent()).getBackground().setAlpha((int)(255/1.5));
@@ -101,6 +114,8 @@ public class MainUi
 		backBut.setColorFilter(Uiprops.primaryColor);
 		nextBut.setColorFilter(Uiprops.primaryColor);
 	    searchBut.setColorFilter(Uiprops.primaryColor);
+		searchBut.getBackground().setTint(Uiprops.primaryColor);// setColorFilter(Uiprops.primaryColor, PorterDuff.Mode.ADD);// .SRC_ATOP);
+		searchBut.getBackground().setAlpha((int)(255/1.5));
 		shuffleBut.setColorFilter(Uiprops.primaryColor); 
 		tracksLv.setBackgroundColor(Uiprops.secondaryColor);
 		searchV.setBackgroundColor(Uiprops.secondaryColor);
@@ -252,8 +267,8 @@ public class MainUi
 		int mIntDur = ( (int)(mpDur/(1000*60))*60 );
 		String playPositionString = (int) (mpPos/(1000*60)  )+": "+ (doubPos-mIntPos <10?"0":"") +(doubIPos-mIntPos);
 		String playDurationString = (int) (mpDur/(1000*60)  )+": "+ (doubDur-mIntDur <10?"0":"") +(doubIDur-mIntDur);
-		timer.setText( " "+" "+" "+playDurationString + " --- " +playPositionString+" "+" "+" " );
-		timer.setTextSize(12);
+		timer.setText( " "+" "+" "+playDurationString + "  ×  " +playPositionString+" "+" "+" " );
+		timer.setTextSize(17);
 	}
 
 	
@@ -380,7 +395,7 @@ public class MainUi
 										}
 										if(v.getId() == R.id.but_showLyrics){   
 											lyricsViewContainer.setVisibility( lyricsViewContainer.getVisibility() == View.VISIBLE?View.GONE:View.VISIBLE);
-											new com.aydavid.mpmusic.LyricsMC.LyricsLoader(AppInstance).DisplayLyrics((TextView) AppInstance.findViewById(R.id.lyricsView), Playerprops.NOW_PLAYING);
+											new com.aydavid.mpmusic.LyricsMC.LyricsLoader(AppInstance).DisplayLyrics((TextView) AppInstance.findViewById(R.id.lyricsView), Playerprops.NOW_PLAYING, lyricsViewContainer.getVisibility());
 										}
 									}//EO onClick
 								});
@@ -470,22 +485,7 @@ public class MainUi
 		
 		
 		
-			
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
