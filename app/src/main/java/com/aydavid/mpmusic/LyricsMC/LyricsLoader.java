@@ -23,6 +23,7 @@ import org.json.*;
 import java.util.*;
 import java.net.*;
 import android.net.*;
+import android.view.*;
 
 
 
@@ -158,7 +159,9 @@ public class LyricsLoader
 		this.context = this;
 		this.appContext = _context;
 	}
-	public void DisplayLyrics(TextView lyricsView, song song){
+	public void DisplayLyrics(TextView lyricsView, song song, int visibility){
+		if(visibility == View.GONE) return;
+        lyricsView.setText("loading lyrics... please wait.");
 	    AsyncLyricsLoader Loader = (new AsyncLyricsLoader());
 		Loader.SetView(lyricsView);
 		Loader.execute(song);
@@ -226,31 +229,12 @@ public class LyricsLoader
     
     public void SetTextView(TextView tview, String content)
 	{
-		try{
-			JSONObject jObj=  new JSONObject(); 
-			if(content != "" ){   jObj = new JSONObject(content); } 
 			Lyric lyric = new Lyric();
-			Iterator songsKeyInJson = jObj.keys();
-			while (songsKeyInJson.hasNext()){   
-				//iterator
-				String currentKey = (String) songsKeyInJson.next(); 
-				if(currentKey.compareToIgnoreCase("error")==0) lyric.error = (jObj.getBoolean(currentKey));
-				if(currentKey.compareToIgnoreCase("status")==0) lyric.status = (jObj.getString(currentKey));
-				if(currentKey.compareToIgnoreCase("value")==0) lyric.value = new JSONObject(jObj.getString(currentKey));
-
-				//sorter
-				//EO while
-			}//EO while
-			;;;;//System.out.println("Error: "+lyric.error);
-			;;;;//System.out.println("Value: "+lyric.value);
+			lyric.useContent(content);
 			lyric.setValues();
 			;;;;//System.out.println("\n THIS IS THE FINAL LYRICS \n ");
 		    ;;;;//System.out.println(lyric.linesConcated);
 		    tview.setText(lyric.linesConcated);
-		}
-		catch(Exception e){
-			;;;;//System.out.println("\n Exception: \n"+e);
-		}
 	}
     
     
@@ -366,10 +350,33 @@ public class LyricsLoader
 		public Lyric (){
 
 		}
+		public void useContent(String content){
+		    try{
+			JSONObject jObj=  new JSONObject(); 
+			if(content != "" ){   jObj = new JSONObject(content); } 
+			Iterator songsKeyInJson = jObj.keys();
+			while (songsKeyInJson.hasNext()){   
+				//iterator
+				String currentKey = (String) songsKeyInJson.next(); 
+				if(currentKey.compareToIgnoreCase("error")==0) this.error = (jObj.getBoolean(currentKey));
+				if(currentKey.compareToIgnoreCase("status")==0) this.status = (jObj.getString(currentKey));
+				if(currentKey.compareToIgnoreCase("value")==0) this.value = new JSONObject(jObj.getString(currentKey));
+				//sorter
+				//EO while
+			}//EO while
+			;;;;//System.out.println("Error: "+lyric.error);
+			;;;;//System.out.println("Value: "+lyric.value);
+		    }//EO try
+		    catch(Exception e){
+		        this.error = true;
+			    ;;;;//System.out.println("\n Exception: \n"+e);
+		    }//
+		}
 		public void setValues(){
-			this.linesConcated = "";
+			this.linesConcated = "We could not find lyrics";
 			if(this.error) return;
 			try{
+			    this.linesConcated = "";
 				this.id = value.getString("LYRICS_ID");
 				this.linesArray = value.getJSONArray("LYRICS_SYNC_JSON");
 				;;;;//System.out.println("\n\nLyrics.setValues:\n ");
@@ -380,13 +387,43 @@ public class LyricsLoader
 				{	
 					this.linesConcated += "\n\n"+linesArray.getJSONObject(i).getString("line");
 				}
+				//Append
+				for (int i = 0; i < 5; i++)
+				{	
+					this.linesConcated += "\n\n";
+				}
 			}catch(Exception e){
 				this.linesConcated = "SORRY, LYRICS NOT FOUND";
 				;;;;//System.out.println("\n Exception At setLines: \n"+e);
 			}
 		}
+		
 	}
-
+    
+	
+	
+	
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

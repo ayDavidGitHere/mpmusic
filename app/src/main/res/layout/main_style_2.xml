@@ -12,7 +12,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="500dp"
 		android:id="@+id/songIm"
-		android:layout_gravity="center_horizontal"
+		android:layout_gravity="center_vertical"
 	/>
 	<!--$$$-->
 	<LinearLayout
@@ -267,6 +267,7 @@
 				android:src="@drawable/search" 
 				android:id="@+id/searchBut"
 			    android:padding="5dp"
+				android:background="@drawable/bg_rad_grey_fixed_padding"
 			/>
 		</LinearLayout>
 		
