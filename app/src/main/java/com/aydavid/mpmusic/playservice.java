@@ -198,6 +198,7 @@ public class playservice extends Service
 	
 	public void LIST_TONEXT(){
 		ArrayList <song> itemA = Playerprops.SONG_LIST_CURRENT;
+		ArrayList <song> all_songs = Playerprops.SONG_LIST_ALL;
 	    try{
 			if(songQueue.size() < 1){playfromQueue = false;}
 			if(!playfromQueue){
@@ -208,8 +209,10 @@ public class playservice extends Service
 				}
 				else{ playIndex = playIndex+1; }
 				if(playIndex <copySongList.size()){  
-					song itemE = itemA.get(copySongList.get(playIndex).getSongInd() );
+					song itemE = all_songs.get(copySongList.get(playIndex).getSongInd() );
 					PLAY_SONG(itemE);  
+				}else{
+					toast_serve("End of playlist");
 				}
 			}//EO if(playfromQueue)
 			else if(playfromQueue){ 
